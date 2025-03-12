@@ -6,6 +6,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
       elevation: 0,
       title: Row(
         children: [

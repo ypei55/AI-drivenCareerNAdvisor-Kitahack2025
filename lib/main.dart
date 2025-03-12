@@ -1,3 +1,4 @@
+import 'package:careeradvisor_kitahack2025/Page/CheckerResults.dart';
 import 'package:careeradvisor_kitahack2025/Page/LogIn.dart';
 import 'package:careeradvisor_kitahack2025/Page/SignUp.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/checker',
       builder: (context, state) => Checker(),
+    ),
+    GoRoute(
+      path: '/checkerresults',
+      builder: (context, state) => CheckerResults(),
     ),
     GoRoute(
       path: '/interview',

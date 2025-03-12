@@ -1,5 +1,7 @@
+import 'package:careeradvisor_kitahack2025/Page/CheckerResults.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:go_router/go_router.dart';
 
 import '../Component/TopNavBar.dart';
 
@@ -95,7 +97,7 @@ class _CheckerState extends State<Checker> {
                       child: Text(
                         "Job Description",
                         style: TextStyle(
-                            fontSize: 27, fontWeight: FontWeight.bold),
+                            fontSize: 28, fontWeight: FontWeight.w900),
                       ),
                     ),
                     SizedBox(height: 10),
@@ -118,17 +120,13 @@ class _CheckerState extends State<Checker> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 30),
                     SizedBox(
-                      width: 200,
-                      height: 50,
+                      width: 250,
+                      height: 40,
                       child: ElevatedButton(
                         onPressed: () {
-                          if (_fileName != null) {
-                            print("File selected: $_fileName");
-                          } else {
-                            print("No file selected");
-                          }
+                          context.go('/checkerresults');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
