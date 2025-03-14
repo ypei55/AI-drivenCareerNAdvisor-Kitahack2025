@@ -126,7 +126,7 @@ class _CheckerState extends State<Checker> {
                       height: 40,
                       child: ElevatedButton(
                         onPressed: () {
-                          context.go('/checkerresults');
+                         context.go('/checkerResults', extra: 100);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,

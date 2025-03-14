@@ -47,9 +47,13 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => Checker(),
     ),
     GoRoute(
-      path: '/checkerresults',
-      builder: (context, state) => CheckerResults(),
-    ),
+  path: '/checkerresults',
+  builder: (context, state) {
+    final percentage = state.extra as double? ?? 0.0; // Default to 0 if not provided
+    return CheckerResults(percentage: percentage);
+  },
+),
+
     GoRoute(
       path: '/interview',
       builder: (context, state) => Interview(),

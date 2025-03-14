@@ -3,11 +3,15 @@ import '../Component/TopNavBar.dart';
 import 'package:go_router/go_router.dart';
 
 class CheckerResults extends StatelessWidget {
+  final double percentage; // Pass percentage dynamically
+
+  CheckerResults({super.key, required this.percentage});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopNavBar(),
-      backgroundColor: Color(0xFFFFF5EC),
+      backgroundColor: const Color(0xFFFFF5EC),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -15,7 +19,8 @@ class CheckerResults extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 15, top: 15),
               child: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.black, size: 25),
+                icon:
+                    const Icon(Icons.arrow_back, color: Colors.black, size: 25),
                 onPressed: () {
                   context.go('/checker');
                 },
@@ -25,17 +30,17 @@ class CheckerResults extends StatelessWidget {
               padding: const EdgeInsets.only(left: 50, right: 50, bottom: 30),
               child: Column(
                 children: [
-                  Text(
+                  const Text(
                     "Checking Results",
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFFF2994A)),
+                        color: Color(0xFFFF6B00)),
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   // Matching Score Section (Using Container)
                   Container(
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -47,7 +52,7 @@ class CheckerResults extends StatelessWidget {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: const [
                               Text(
                                 "Matched Parts:",
                                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -70,33 +75,70 @@ class CheckerResults extends StatelessWidget {
                             ],
                           ),
                         ),
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.orange,
-                          child: Text(
-                            "75%",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        // Circular Progress with Percentage
+                        Padding(
+  padding: const EdgeInsets.only(right: 100),
+  child: Column(
+    children: [
+      // Circular Progress with Percentage
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            width: 100,
+            height: 100,
+            child: CircularProgressIndicator(
+              value: percentage / 100, // Convert 0-100 to 0.0-1.0
+              strokeWidth: 10,
+              backgroundColor: Colors.grey[300],
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFFFF6B00),
+              ),
+            ),
+          ),
+          CircleAvatar(
+            radius: 35,
+            backgroundColor: Colors.white,
+            child: Text(
+              "${percentage.toInt()}%",
+              style: const TextStyle(
+                color: Color(0xFFFF6B00),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12), // Space between percentage and text
+      const Text(
+        "Matching Score",
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+    ],
+  ),
+),
+
                       ],
                     ),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   // Revised Version Section
-                  Text(
+                  const Text(
                     "Revised Version",
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFFF2994A)),
+                        color: Color(0xFFFF6B00)),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white,
@@ -104,7 +146,7 @@ class CheckerResults extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: const [
                         Text("**Name**"),
                         Text("Hardware Developer - Smart Rubbish Bin Project"),
                         Text(
@@ -123,7 +165,7 @@ class CheckerResults extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   // Download Button
                   SizedBox(
                     width: 250,
@@ -136,7 +178,7 @@ class CheckerResults extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Download",
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
