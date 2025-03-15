@@ -34,7 +34,7 @@ class _CheckerState extends State<Checker> {
       backgroundColor: Color(0xFFFFF5EC),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

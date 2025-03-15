@@ -27,7 +27,7 @@ class CheckerResults extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 50, right: 50, bottom: 30),
+              padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
               child: Column(
                 children: [
                   const Text(
