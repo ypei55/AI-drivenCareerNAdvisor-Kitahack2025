@@ -8,6 +8,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
       elevation: 0,
+      primary: false, // Ensures it doesn’t adapt to the body color
       title: Row(
         children: [
           // Logo with title
