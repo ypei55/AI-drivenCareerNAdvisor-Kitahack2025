@@ -174,7 +174,10 @@ class Courses extends StatelessWidget implements PreferredSizeWidget {
                       onPressed: (){
 
                       },
-                      icon: Icon(Icons.search),
+                      icon: Icon(
+                          Icons.search,
+                        size: 30,
+                      ),
                   ),
                   Spacer(),
                   TextButton(
