@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   file_picker: ^9.0.2
+  fl_chart: ^0.66.0
   flutter:
     sdk: flutter
 
