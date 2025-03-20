@@ -2,9 +2,10 @@ import 'package:careeradvisor_kitahack2025/Component/NavBarLogIn.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../Services/AIServices.dart';
+
 
 class Login extends StatelessWidget implements PreferredSizeWidget {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NavBarLogIn(),

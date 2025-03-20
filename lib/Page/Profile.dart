@@ -2,6 +2,7 @@ import 'package:careeradvisor_kitahack2025/Component/lessonCard.dart';
 import 'package:flutter/material.dart';
 
 import '../Component/TopNavBar.dart';
+import '../Services/AIServices.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -274,20 +275,30 @@ class _ProfileState extends State<Profile> {
                               radius: 20,
                             ),
                             SizedBox(width: 15,),
-                            Container(
-                              width: 80,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Color(0xFFFF51007),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Premium Tier",
-                                  style: TextStyle(color: Colors.white, fontSize: 12),
-                                  maxLines: 2,
-                                  textAlign: TextAlign.center,
+                            GestureDetector(
+                              onTap: () async {
+                                AIService aiService = AIService();
+
+                                String userAnswer = "I have 3 years of experience in Flutter development.";
+                                String evaluation = await aiService.evaluateAnswer(userAnswer);
+
+                                print("AI Feedback: $evaluation");
+                              },
+                              child: Container(
+                                width: 80,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color(0xFFFF51007),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Premium Tier",
+                                    style: TextStyle(color: Colors.white, fontSize: 12),
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ),
                             ),

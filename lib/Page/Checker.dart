@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:careeradvisor_kitahack2025/Page/CheckerResults.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,7 +17,7 @@ class _CheckerState extends State<Checker> {
   String? _fileName;
   bool _isHovering = false; // Track hover state
 
-  Future<void> _pickFile() async {
+  Future<String> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'docx', 'doc'],
@@ -24,7 +27,18 @@ class _CheckerState extends State<Checker> {
       setState(() {
         _fileName = result.files.single.name;
       });
+
+      Uint8List bytes = result.files.single.bytes!;
+      return await extractTextFromPDF(bytes);
     }
+    return "No file selected.";
+  }
+
+  Future<String> extractTextFromPDF(Uint8List bytes) async {
+    final PdfDocument document = PdfDocument(inputBytes: bytes);
+    String text = PdfTextExtractor(document).extractText();
+    document.dispose();
+    return text;
   }
 
   @override
@@ -48,7 +62,10 @@ class _CheckerState extends State<Checker> {
                       cursor:
                           SystemMouseCursors.click, // Change cursor to pointer
                       child: GestureDetector(
-                        onTap: _pickFile,
+                        onTap: () async {
+                          String text = await _pickFile();
+                          print("Extracted Text: $text");
+                        },
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 200),
                           width: double.infinity,
