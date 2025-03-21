@@ -8,8 +8,12 @@ import 'Page/Courses.dart';
 import 'Page/Home.dart';
 import 'Page/Interview.dart';
 import 'Page/Profile.dart'; // Import the component
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+
+Future<void> main() async {
+  await dotenv.load(fileName: ".env"); // Load environment variables
+
   runApp(MyApp());
 }
 

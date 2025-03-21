@@ -1,10 +1,14 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AIService {
-  final String apiKey = "AIzaSyAod3bstAG3bzu5jjOjHuJHcyuUBNvjPFU";
+  final String apiKey = dotenv.env['GEMINI_API_KEY'] ?? ''; // Get API Key from .env
   late final GenerativeModel model;
 
   AIService() {
+    if (apiKey.isEmpty) {
+      throw Exception("API Key not found. Make sure you have a .env file.");
+    }
     model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey);
   }
 
