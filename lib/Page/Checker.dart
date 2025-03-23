@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:careeradvisor_kitahack2025/Services/AIServices.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:careeradvisor_kitahack2025/Page/CheckerResults.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
-
 import '../Component/TopNavBar.dart';
 
 class Checker extends StatefulWidget {
@@ -15,7 +15,9 @@ class Checker extends StatefulWidget {
 
 class _CheckerState extends State<Checker> {
   String? _fileName;
-  bool _isHovering = false; // Track hover state
+  bool _isHovering = false;
+  TextEditingController _jobDescriptionController = TextEditingController();
+  String? _resumeText;
 
   Future<String> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -29,7 +31,7 @@ class _CheckerState extends State<Checker> {
       });
 
       Uint8List bytes = result.files.single.bytes!;
-      return await extractTextFromPDF(bytes);
+      _resumeText = await extractTextFromPDF(bytes); // Store the extracted text
     }
     return "No file selected.";
   }
@@ -40,6 +42,44 @@ class _CheckerState extends State<Checker> {
     document.dispose();
     return text;
   }
+
+  Future<void> _checkResume() async {
+  try {
+    if (_resumeText == null || _resumeText!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please upload a resume first.")),
+        );
+        return;
+      }
+
+    String jobDescription = _jobDescriptionController.text;
+
+    if (jobDescription.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please enter a job description.")),
+        );
+        return;
+      }
+
+    print("Resume Text: $_resumeText");
+    print("Job Description: $jobDescription");
+
+    AIService aiService = AIService();
+    print("AIService initialized with API Key: ${aiService}");
+
+    String aiResponse = await aiService.compareResumeAndJobDescription(_resumeText!, jobDescription);
+
+    print("AI Response: $aiResponse");
+
+    print("Navigating to /checkerresults");
+    context.go('/checkerresults', extra: aiResponse);
+  } catch (e) {
+    print("Error during navigation: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("An error occurred: $e")),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -59,26 +99,19 @@ class _CheckerState extends State<Checker> {
                     MouseRegion(
                       onEnter: (_) => setState(() => _isHovering = true),
                       onExit: (_) => setState(() => _isHovering = false),
-                      cursor:
-                          SystemMouseCursors.click, // Change cursor to pointer
+                      cursor: SystemMouseCursors.click,
                       child: GestureDetector(
-                        onTap: () async {
-                          String text = await _pickFile();
-                          print("Extracted Text: $text");
-                        },
+                        onTap: _pickFile,
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 200),
                           width: double.infinity,
                           height: 350,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: _isHovering
-                                  ? Colors.orangeAccent
-                                  : Colors.orange,
+                              color: _isHovering ? Colors.orangeAccent : Colors.orange,
                             ),
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
-                            boxShadow: _isHovering ? [] : [],
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -86,22 +119,18 @@ class _CheckerState extends State<Checker> {
                               Icon(
                                 Icons.cloud_upload,
                                 size: 200,
-                                color: _isHovering
-                                    ? Colors.orange // Change to orange on hover
-                                    : Colors.grey[400], // Default color
+                                color: _isHovering ? Colors.orange : Colors.grey[400],
                               ),
                               SizedBox(height: 10),
                               Text(
                                 _fileName ?? "Drop, Upload or Paste Resume",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w600),
+                                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(height: 5),
                               Text(
                                 "Supported formats: .pdf, .docx, .doc",
-                                style:
-                                    TextStyle(fontSize: 14, color: Colors.grey),
+                                style: TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                             ],
                           ),
@@ -113,8 +142,7 @@ class _CheckerState extends State<Checker> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Job Description",
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.w900),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
                       ),
                     ),
                     SizedBox(height: 10),
@@ -128,11 +156,11 @@ class _CheckerState extends State<Checker> {
                         color: Colors.white,
                       ),
                       child: TextField(
+                        controller: _jobDescriptionController,
                         maxLines: 4,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText:
-                              "Write or paste job description about your desired role on job vacancy",
+                          hintText: "Write or paste job description about your desired role on job vacancy",
                           hintStyle: TextStyle(color: Colors.grey[500]),
                         ),
                       ),
@@ -142,9 +170,7 @@ class _CheckerState extends State<Checker> {
                       width: 250,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {
-                         context.go('/checkerResults', extra: 100);
-                        },
+                        onPressed: _checkResume,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           shape: RoundedRectangleBorder(

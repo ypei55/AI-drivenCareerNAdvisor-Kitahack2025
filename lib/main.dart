@@ -12,8 +12,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env"); // Load environment variables
-
   runApp(MyApp());
 }
 
@@ -51,13 +49,12 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => Checker(),
     ),
     GoRoute(
-  path: '/checkerresults',
-  builder: (context, state) {
-    final percentage = state.extra as double? ?? 0.0; // Default to 0 if not provided
-    return CheckerResults(percentage: percentage);
-  },
-),
-
+      path: '/checkerresults',
+      builder: (context, state) {
+        final aiResponse = state.extra as String? ?? "No response available.";
+        return CheckerResults(aiResponse: aiResponse);
+      },
+    ),
     GoRoute(
       path: '/interview',
       builder: (context, state) => Interview(),
