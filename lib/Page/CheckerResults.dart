@@ -8,32 +8,45 @@ class CheckerResults extends StatelessWidget {
   CheckerResults({super.key, required this.aiResponse});
 
   Map<String, String> _parseAIResponse(String response) {
-    Map<String, String> sections = {};
+  Map<String, String> sections = {
+    'Matching Score': 'N/A',
+    'Missing Keywords': 'N/A',
+    'Suggestions': 'N/A',
+    'Revised Resume': 'N/A',
+  };
 
-    // Extract Matching Score
-    sections['Matching Score'] = response
-        .split('**Matching Score:**')[1]
-        .split('**Missing Keywords:**')[0]
-        .trim();
+  try {
+    if (response.contains('**Matching Score:**') && response.contains('**Missing Keywords:**')) {
+      sections['Matching Score'] = response
+          .split('**Matching Score:**')[1]
+          .split('**Missing Keywords:**')[0]
+          .trim();
+    }
 
-    // Extract Missing Keywords
-    sections['Missing Keywords'] = response
-        .split('**Missing Keywords:**')[1]
-        .split('**Suggestions:**')[0]
-        .trim();
+    if (response.contains('**Missing Keywords:**') && response.contains('**Suggestions:**')) {
+      sections['Missing Keywords'] = response
+          .split('**Missing Keywords:**')[1]
+          .split('**Suggestions:**')[0]
+          .trim();
+    }
 
-    // Extract Suggestions
-    sections['Suggestions'] = response
-        .split('**Suggestions:**')[1]
-        .split('**Revised Resume:**')[0]
-        .trim();
+    if (response.contains('**Suggestions:**') && response.contains('**Revised Resume:**')) {
+      sections['Suggestions'] = response
+          .split('**Suggestions:**')[1]
+          .split('**Revised Resume:**')[0]
+          .trim();
+    }
 
-    // Extract Revised Resume
-    sections['Revised Resume'] =
-        response.split('**Revised Resume:**')[1].trim();
-
-    return sections;
+    if (response.contains('**Revised Resume:**')) {
+      sections['Revised Resume'] = response.split('**Revised Resume:**')[1].trim();
+    }
+  } catch (e) {
+    // Handle any unexpected errors during parsing
+    print('Error parsing AI response: $e');
   }
+
+  return sections;
+}
 
   @override
   Widget build(BuildContext context) {
