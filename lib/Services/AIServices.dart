@@ -88,4 +88,57 @@ class AIService {
     final response = await model.generateContent([Content.text(prompt)]);
     return response.text ?? "Error comparing resume and job description.";
   }
+
+  Future<String> generateInterviewQuestions(String jobTitle, String companyName, String jobDesc, String responsibilities) async {
+    final prompt = """
+    You are an HR interviewer of $companyName who conducting an interview for a fresh graduate applying for the position of $jobTitle.
+
+    **Job Description:**
+    $jobDesc
+    
+    **Responsibilities:**
+    $responsibilities
+    
+    Generate 5 relevant interview questions based on the job role.
+    """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+    return response.text ?? "Error generating questions.";
+  }
+
+  Future<String> evaluateInterviewResponses(Map<String, String> responses) async {
+    final prompt = """
+    Evaluate the following interview responses, provide feedback, and give recommendations for improvement.
+    
+    ${responses.entries.map((e) => "**Question:** ${e.key}\n**Response:** ${e.value}").join("\n\n")}
+    
+    Tasks:
+    1. Provide feedback on each response.
+    2. Suggest improvements for each answer.
+    3. Generate a final interview report including:
+       - Technical Skills Rating (1-10)
+       - Communication Skills Rating (1-10)
+       - Overall Score (1-10)
+    
+    Format your response as follows:
+    
+    **Interview Evaluations:**
+    
+    1. **Question:** [Question]
+       **Interviewee Response:** [Response]
+       **Feedback:** [Feedback]
+       **Recommendation:** [Recommendation]
+    
+    (Repeat for all responses)
+    
+    **Final Interview Report:**
+    - **Technical Skills Rating:** [Score]/10
+    - **Communication Skills Rating:** [Score]/10
+    - **Overall Score:** [Score]/10
+    """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+    return response.text ?? "Error evaluating interview.";
+  }
 }
+

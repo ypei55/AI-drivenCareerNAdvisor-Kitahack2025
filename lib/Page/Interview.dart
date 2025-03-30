@@ -1,21 +1,21 @@
 import 'package:careeradvisor_kitahack2025/Page/Interview_details.dart';
 import 'package:flutter/material.dart';
 import '../Component/TopNavBar.dart';
-void main() {
-  runApp(const MyApp());
-}
+// void main() {
+//   runApp(const MyApp());
+// }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Interview(),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: Interview(),
+//     );
+//   }
+// }
 
 class Interview extends StatelessWidget {
   final List<Map<String, dynamic>> interviewData = [

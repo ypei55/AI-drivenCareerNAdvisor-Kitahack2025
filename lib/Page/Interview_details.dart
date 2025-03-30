@@ -2,25 +2,9 @@ import 'package:careeradvisor_kitahack2025/Page/LiveInterviewScreen.dart';
 import 'package:flutter/material.dart';
 import '../Component/TopNavBar.dart';
 
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: Interview_details(),
-//     );
-//   }
-// }
 class Interview_details extends StatelessWidget {
     final Map<String, dynamic> interview;
   const Interview_details({super.key, required this.interview});
-
 
   @override
   Widget build(BuildContext context) {
@@ -378,13 +362,13 @@ class JobDetails extends StatelessWidget {
                 children: [
               ElevatedButton(onPressed: () {
                 Navigator.push(
-                  context, MaterialPageRoute(builder: (context)=> MockInterviewScreen(showNotification:true,jobTitle: jobTitle, companyName: companyName)),
+                  context, MaterialPageRoute(builder: (context)=> MockInterviewScreen(showNotification:true,jobTitle: jobTitle, companyName: companyName, responsibilities: responsibilities, jobDesc:jobDesc)),
                 );
                 //Navigate to MockInterviewScreen()
                 },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6B00),foregroundColor: Colors.white), child: const Text('Normal Mode'),),
               ElevatedButton(onPressed: () {
                 Navigator.push(
-                  context, MaterialPageRoute(builder: (context)=> MockInterviewScreen(showNotification: false, jobTitle: jobTitle, companyName: companyName)),
+                  context, MaterialPageRoute(builder: (context)=> MockInterviewScreen(showNotification: false, jobTitle: jobTitle, companyName: companyName, responsibilities:responsibilities, jobDesc:jobDesc)),
                 );
               },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD9D9D9),foregroundColor: Colors.white), child: const Text('Intensive Mode'),),
 

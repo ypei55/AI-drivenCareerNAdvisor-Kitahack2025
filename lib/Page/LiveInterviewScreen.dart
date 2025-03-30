@@ -8,7 +8,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // List<CameraDescription> cameras = await availableCameras();
   runApp(const MyApp());
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MockInterviewScreen(jobTitle:'jobTile', companyName: 'companyName',),
+      home: const MockInterviewScreen(jobTitle:'jobTile', companyName: 'companyName',responsibilities: '...',jobDesc: '...',),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -32,8 +31,10 @@ class MockInterviewScreen extends StatefulWidget {
   final bool showNotification;
   final String jobTitle;
   final String companyName;
+  final String responsibilities;
+  final String jobDesc;
   // final List<CameraDescription> cameras;
-  const MockInterviewScreen({super.key, required this.jobTitle, required this.companyName,this.showNotification=true});
+  const MockInterviewScreen({super.key, required this.jobTitle, required this.companyName,this.showNotification=true, required this.responsibilities, required this.jobDesc});
   @override
   _MockInterviewScreenState createState() => _MockInterviewScreenState();
 }
@@ -47,6 +48,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   final stt.SpeechToText _speech = stt.SpeechToText();
   String _recognizedWords = '';
   List<CameraDescription>? _availableCameras;
+  List<String> interviewQuestions = [];
 
   @override
   void initState() {
