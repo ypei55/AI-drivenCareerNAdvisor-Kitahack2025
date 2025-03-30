@@ -8,8 +8,10 @@ import 'Page/Courses.dart';
 import 'Page/Home.dart';
 import 'Page/Interview.dart';
 import 'Page/Profile.dart'; // Import the component
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+
+Future<void> main() async {
   runApp(MyApp());
 }
 
@@ -47,13 +49,12 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => Checker(),
     ),
     GoRoute(
-  path: '/checkerresults',
-  builder: (context, state) {
-    final percentage = state.extra as double? ?? 0.0; // Default to 0 if not provided
-    return CheckerResults(percentage: percentage);
-  },
-),
-
+      path: '/checkerresults',
+      builder: (context, state) {
+        final aiResponse = state.extra as String? ?? "No response available.";
+        return CheckerResults(aiResponse: aiResponse);
+      },
+    ),
     GoRoute(
       path: '/interview',
       builder: (context, state) => Interview(),
