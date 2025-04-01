@@ -1,4 +1,3 @@
-import 'package:careeradvisor_kitahack2025/Page/Interview_details.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../Component/TopNavBar.dart';
