@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:careeradvisor_kitahack2025/Page/SignUp.dart';
+import 'package:careeradvisor_kitahack2025/Services/Provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../Component/TopNavBar.dart';
+import '../Services/AIServices.dart';
 
 class Home extends StatefulWidget implements PreferredSizeWidget {
   @override
@@ -13,24 +19,110 @@ class Home extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _HomeState extends State<Home> {
-  final List<List<String>> skills = [
-    ['Java', 'Phyton', 'MySQL', 'MongoDB'], // First column
-    ['Node.js', 'AWS', 'C++', 'Azure']      // Second column
-  ];
+  final TextEditingController _searchController = TextEditingController();
+  final AIService apiService = AIService();
+  List<int> jobOpenings = [0,0,0,0,0];
+  List<String> skills = [];
+  List<String> companies = [];
+  String salary='';
 
-  final List<String> companies = ['IT Systems Design', 'Measuring & Control Instrument', 'Manufacturing'];
+  void _onSearch() async {
+    String query = _searchController.text.trim();
+    if (query.isEmpty) return;
 
-  final List<List<String>> recommended = [
-    ['assets/software.png','Software Engineer','assets/salary.png','RM 3000 - RM 3500', 'assets/skills.png','Java,Python,C++,MongoDB,Node.js,AWS......','assets/match.png','85% Match| Interest · Skills · Education'],
-    ['assets/software.png','Software Engineer','assets/salary.png','RM 3000 - RM 3500','assets/skills.png', 'Java,Python,C++,MongoDB,Node.js,AWS......','assets/match.png','85% Match| Interest · Skills · Education'],
-    ['assets/software.png','Software Engineer','assets/salary.png','RM 3000 - RM 3500', 'assets/skills.png','Java,Python,C++,MongoDB,Node.js,AWS......','assets/match.png','85% Match| Interest · Skills · Education'],
-  ];
+    try {
+      String jsonData = await apiService.getJobOpenings(query);
+      String skillJsonData = await apiService.getCommonSkills(query);
+      String companyJsonData = await apiService.getTopHiringCompanies(query);
+      String salaryJsonData = await apiService.getSalary(query);
 
-  final List<List<String>> relevant = [
-    ['assets/UI & UX.png','UI/UX Designer','assets/salary.png','RM 3000 - RM 3250', 'assets/skills.png','Figma,Adobe XD,Sketch,Axure,Illustrator,InVision......','assets/match.png','63% Match| Interest · Skills · Education'],
-    ['assets/UI & UX.png','UI/UX Designer','assets/salary.png','RM 3000 - RM 3250','assets/skills.png', 'Figma,Adobe XD,Sketch,Axure,Illustrator,InVision......','assets/match.png','63% Match| Interest · Skills · Education'],
-    ['assets/UI & UX.png','UI/UX Designer','assets/salary.png','RM 3000 - RM 3250', 'assets/skills.png','Figma,Adobe XD,Sketch,Axure,Illustrator,InVision......','assets/match.png','63% Match| Interest · Skills · Education'],
-  ];
+      // Debugging: Print raw API responses
+      print("Raw Job Openings API Response: ${jsonData.runtimeType} -> $jsonData");
+      print("Raw Skills API Response: ${skillJsonData.runtimeType} -> $skillJsonData");
+      print("Raw Companies API Response: ${companyJsonData.runtimeType} -> $companyJsonData");
+      print("Raw Salary API Response: ${salaryJsonData.runtimeType} -> $salaryJsonData");
+
+      // Ensure API response is a valid JSON string
+      String cleanJson(String response) {
+        return response.replaceAll(RegExp(r'```json|```'), '').trim();
+      }
+
+      // Validate if the response is JSON or contains unexpected formatting
+      dynamic parseJson(String response) {
+        response = cleanJson(response);
+        if (!response.startsWith('{') && !response.startsWith('[')) {
+          throw FormatException("Unexpected response format: Not valid JSON");
+        }
+        return jsonDecode(response);
+      }
+
+      Map<String, dynamic> jobData = parseJson(jsonData);
+      Map<String, dynamic> skillData = parseJson(skillJsonData);
+      Map<String, dynamic> companyData = parseJson(companyJsonData);
+      Map<String, dynamic> salaryData = parseJson(salaryJsonData);
+
+      // Handle API error responses
+      if (jobData.containsKey('error')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch job data.")));
+        return;
+      }
+
+      if (!skillData.containsKey('skills') || skillData['skills'] is! List) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch skills.")));
+        return;
+      }
+
+      if (!companyData.containsKey('companies') || companyData['companies'] is! List) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch hiring companies.")));
+        return;
+      }
+
+      if (!salaryData.containsKey('salary')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch salary.")));
+        return;
+      }
+
+      // Update state with validated data
+      setState(() {
+        jobOpenings = [
+          jobData['2020'] ?? 0,
+          jobData['2021'] ?? 0,
+          jobData['2022'] ?? 0,
+          jobData['2023'] ?? 0,
+          jobData['2024'] ?? 0,
+        ];
+
+        skills = List<String>.from(skillData['skills']);
+
+        companies = List<String>.from(companyData['companies']);
+         salary = salaryData['salary'];
+      });
+    } catch (e) {
+      print("JSON Decode Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid response format.")));
+    }
+  }
+
+  List<BarChartGroupData> _getBarGroups() {
+    return List.generate(jobOpenings.length, (index) {
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: jobOpenings[index].toDouble(),
+            color: Colors.orange,
+            width: 20,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ],
+      );
+    });
+  }
 
   List<String> filterOptions = [
     "High salary",
@@ -45,9 +137,12 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> recommended = Provider.of<RecommendationProvider>(context).recommended;
+    List<Map<String, dynamic>> relevant = Provider.of<RecommendationProvider>(context).relevant;
     return Scaffold(
       appBar: TopNavBar(),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Container(
           padding: EdgeInsetsDirectional.only(start:50,end:25,top:30),
           color: Color( 0xFFFFF5EC),
@@ -119,12 +214,14 @@ class _HomeState extends State<Home> {
                           width:400,
                           height:30 ,
                           child: SearchBar(
+                            controller:_searchController,
                             backgroundColor:WidgetStateProperty.all(Colors.white) ,
                             hintText: 'Search for specific job',
                             hintStyle:WidgetStatePropertyAll(TextStyle(
                               color:Colors.grey
                             )),
                             leading: Icon(Icons.search,color: Colors.grey,),
+                            onSubmitted: (_)=>_onSearch(),
                           )
                         ),
                         SizedBox(
@@ -219,43 +316,37 @@ class _HomeState extends State<Home> {
                         SizedBox(
                           height: 15,
                         ),
-                        SizedBox(
-                          width: 300,
-                          height: 200,
-                          child: ListView(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: skills.map((columnSkills){
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: columnSkills.map((skill){
-                                        return Padding(
-                                            padding:EdgeInsets.symmetric(vertical: 5),
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                              decoration: BoxDecoration(
-                                                color: Colors.orange,
-                                                borderRadius: BorderRadius.circular(20)
-                                              ),
-                                              child: Text(skill,
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                              ),
-                                            ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  );
-                                }).toList(),
-                              )
-                            ],
+          SizedBox(
+            width: 300,
+            height: 200,
+            child: ListView(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: skills.map((skill) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.orange,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          skill,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          )
+          ],
                     ),
                     Container(
                       margin: EdgeInsetsDirectional.only(start: 80,top:25,bottom:25,end:40),
@@ -333,7 +424,7 @@ class _HomeState extends State<Home> {
                                 SizedBox(
                                   width: 10,
                                 ),
-                                Text('RM 3000 - RM 3500',
+                                Text(salary,
                                   style:TextStyle(
                                       fontSize: 15
                                   ) ,)
@@ -413,10 +504,11 @@ class _HomeState extends State<Home> {
                     SizedBox(
                      height: 15,
                     ),
-                   SizedBox(
+                   Container(
                      height: 180,
                      child: ListView.builder(
                        scrollDirection: Axis.horizontal,
+                       physics: BouncingScrollPhysics(),
                        itemCount: recommended.length,
                        itemBuilder: (context,index){
                          return Container(
@@ -435,11 +527,11 @@ class _HomeState extends State<Home> {
                                      SizedBox(
                                        width: 15,
                                      ),
-                                     Image(image: AssetImage(recommended[index][0]),height: 30,),
+                                     Image(image: AssetImage('assets/software.png'),height: 30,),
                                      SizedBox(
                                        width: 35,
                                      ),
-                                     Text(recommended[index][1],
+                                     Text(recommended[index]['title']?? 'No Title',
                                        style: TextStyle(
                                            fontWeight: FontWeight.bold,
                                            fontSize: 25
@@ -455,11 +547,11 @@ class _HomeState extends State<Home> {
                                      SizedBox(
                                        width: 15,
                                      ),
-                                     Image(image: AssetImage(recommended[index][2]),height: 15,),
+                                     Image(image: AssetImage('assets/salary.png'),height: 15,),
                                      SizedBox(
                                        width: 15,
                                      ),
-                                     Text(recommended[index][3],
+                                     Text(recommended[index]['salary']?? 'No Salary Info',
                                        style: TextStyle(
                                            fontSize: 15
                                        ),
@@ -474,11 +566,11 @@ class _HomeState extends State<Home> {
                                      SizedBox(
                                        width: 15,
                                      ),
-                                     Image(image: AssetImage(recommended[index][4]),height: 15,),
+                                     Image(image: AssetImage('assets/skills.png'),height: 15,),
                                      SizedBox(
                                        width: 15,
                                      ),
-                                     Text(recommended[index][5],
+                                     Text(recommended[index]['skills']?? 'No Skills Info',
                                        style: TextStyle(
                                            fontSize: 15
                                        ),
@@ -493,11 +585,11 @@ class _HomeState extends State<Home> {
                                      SizedBox(
                                        width: 15,
                                      ),
-                                     Image(image: AssetImage(recommended[index][6]),height: 15,),
+                                     Image(image: AssetImage('assets/match.png'),height: 15,),
                                      SizedBox(
                                        width: 15,
                                      ),
-                                     Text(recommended[index][7],
+                                     Text(recommended[index]['match']?? 'No Match Info',
                                        style: TextStyle(
                                            fontSize: 15
                                        ),
@@ -602,11 +694,11 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Image(image: AssetImage(relevant[index][0]),height: 30,),
+                                    Image(image: AssetImage('assets/software.png'),height: 30,),
                                     SizedBox(
                                       width: 35,
                                     ),
-                                    Text(relevant[index][1],
+                                    Text(relevant[index]['title'],
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25
@@ -622,11 +714,11 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Image(image: AssetImage(relevant[index][2]),height: 15,),
+                                    Image(image: AssetImage('assets/salary.png'),height: 15,),
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Text(relevant[index][3],
+                                    Text(relevant[index]['salary'],
                                       style: TextStyle(
                                           fontSize: 15
                                       ),
@@ -641,11 +733,11 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Image(image: AssetImage(relevant[index][4]),height: 15,),
+                                    Image(image: AssetImage('assets/skills.png'),height: 15,),
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Text(relevant[index][5],
+                                    Text(relevant[index]['skills'],
                                       style: TextStyle(
                                           fontSize: 15
                                       ),
@@ -660,11 +752,11 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Image(image: AssetImage(relevant[index][6]),height: 15,),
+                                    Image(image: AssetImage('assets/match.png'),height: 15,),
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Text(relevant[index][7],
+                                    Text(relevant[index]['match'],
                                       style: TextStyle(
                                           fontSize: 15
                                       ),
@@ -690,19 +782,4 @@ class _HomeState extends State<Home> {
   @override
   Size get preferredSize => Size.fromHeight(60); }
 
-List<BarChartGroupData> _getBarGroups() {
-  final jobData = [15000, 8000, 18000, 12000, 23198];
-  return List.generate(jobData.length, (index) {
-    return BarChartGroupData(
-      x: index,
-      barRods: [
-        BarChartRodData(
-          toY: jobData[index].toDouble(),
-          color: Colors.orange,
-          width: 20,
-          borderRadius: BorderRadius.circular(4),
-        ),
-      ],
-    );
-  });
-}
+

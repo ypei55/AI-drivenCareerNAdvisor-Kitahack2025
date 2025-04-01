@@ -1,9 +1,90 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../Component/NavBarSignup.dart';
+import '../Services/AIServices.dart';
+import '../Services/Provider.dart';
 
-class SignUp extends StatelessWidget implements PreferredSizeWidget {
+class SignUp extends StatefulWidget implements PreferredSizeWidget {
+  @override
+  State<SignUp> createState() => _SignUpState();
+
+  @override
+  // TODO: implement preferredSize
+  Size get preferredSize => throw UnimplementedError();
+}
+
+class _SignUpState extends State<SignUp> {
+  final TextEditingController _fieldStudyController = TextEditingController();
+  List<Map<String, dynamic>> recommended = [];
+  List<Map<String, dynamic>> relevant = [];
+  final AIService apiService = AIService();
+
+  String cleanJson(String response) {
+    return response.replaceAll(RegExp(r'```json|```'), '').trim();
+  }
+
+  // Method to validate the cleaned JSON and parse it
+  dynamic parseJson(String response) {
+    response = cleanJson(response);
+
+    if (!response.startsWith('{') && !response.startsWith('[')) {
+      throw FormatException("Unexpected response format: Not valid JSON");
+    }
+    return jsonDecode(response);
+  }
+
+  void _onSearch() async {
+    String query = _fieldStudyController.text.trim();
+    if (query.isEmpty) return;
+
+    try {
+      // Get the recommendation data
+      String recommendJsonData = await apiService.getRecommend(query);
+      String relevantJsonData = await apiService.getRelevant(query);
+
+      // Debugging: Print the cleaned response
+      print("Recommendations API Response: $recommendJsonData");
+      print("Relevant API Response: $relevantJsonData");
+
+      // Use the parseJson function to clean and decode the JSON data
+      Map<String, dynamic> recommendData = parseJson(recommendJsonData);
+      Map<String, dynamic> relevantData = parseJson(relevantJsonData);
+
+      // Handle cases where 'recommendations' is missing or not a List
+      if (!recommendData.containsKey('recommendations') || recommendData['recommendations'] is! List) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to fetch recommendations.")));
+        }
+        return;
+      }
+
+      // Update the recommendations list with the fetched data
+      recommended = List<Map<String, dynamic>>.from(recommendData['recommendations']);
+      relevant = List<Map<String, dynamic>>.from(relevantData['relevant']);
+
+      // Update the provider with the new recommendations
+      if (mounted) {
+        Provider.of<RecommendationProvider>(context, listen: false)
+            .updateRecommendations(recommended);
+
+        Provider.of<RecommendationProvider>(context, listen: false)
+            .updateRelevant(relevant);
+      }
+
+    } catch (e) {
+      print("JSON Decode Error: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Invalid response format.")));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -272,6 +353,7 @@ class SignUp extends StatelessWidget implements PreferredSizeWidget {
                           SizedBox(
                             width:600,
                             child: TextField(
+                              controller: _fieldStudyController,
                               decoration: InputDecoration(
                                   labelStyle: TextStyle(
                                       color: Color(0xFFF2994A)
@@ -291,6 +373,7 @@ class SignUp extends StatelessWidget implements PreferredSizeWidget {
                                     borderRadius: BorderRadius.circular(8),
                                   )
                               ),
+                              onSubmitted: (_)=>_onSearch(),
                             ),
                           ),
                         ],
@@ -813,5 +896,4 @@ class SignUp extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(60); // Adjust height if needed
-}
+  Size get preferredSize => Size.fromHeight(60); }

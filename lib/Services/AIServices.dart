@@ -121,6 +121,8 @@ class AIService {
 
 
   Future<String> evaluateInterviewResponses(Map<String?, String?> responses) async {
+  Future<String> evaluateInterviewResponses(
+      Map<String, String> responses) async {
     final prompt = """
     Evaluate the following interview responses and provide feedback.
     
@@ -153,5 +155,111 @@ class AIService {
     print(response);
     return response.text ?? "Error evaluating interview.";
   }
-}
 
+  Future<String> getJobOpenings(String jobTitle) async {
+    final prompt = """
+       Given the job title "$jobTitle", provide the estimated number of job openings for the years 2020, 2021, 2022, 2023, and 2024.
+      The response should be in JSON format like:
+      {
+        "2020": 15000,
+        "2021": 18000,
+        "2022": 21000,
+        "2023": 25000,
+        "2024": 28000
+      }
+      Do NOT include any extra text, explanation, or comments.
+    """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+    return response.text ?? "Error get job openings.";
+  }
+
+  Future<String> getCommonSkills(String jobTitle) async {
+    final prompt = """
+      Given the job title "$jobTitle", provide a list of common skills required for this job.
+    The response should be in valid JSON format like:
+    {
+      "skills": ["Java", "Python", "MySQL", "MongoDB", "Node.js", "AWS"]
+    }
+    Do NOT include any extra text, explanation, or comments.
+  """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+    return response.text ?? '{"skills":[]}';
+  }
+
+  Future<String> getTopHiringCompanies(String jobTitle) async {
+    final prompt = """
+      Given the job title "$jobTitle", provide a list of the top 3 hiring companies for this role.
+    The response should be in JSON format like:
+    {
+      "companies": [
+        "Google",
+        "Amazon",
+        "Microsoft"
+      ]
+    }
+    Do NOT include any extra text, explanation, or comments.
+  """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+    return response.text ?? '{"companies":[]}';
+  }
+
+  Future<String> getSalary(String jobTitle) async {
+    final prompt = """
+      Given the job title "$jobTitle", provide the estimated salary range in Malaysia.
+    The response should be in JSON format like:
+    {
+     "salary": "RM 3000 - RM 5000"
+    }
+    Do NOT include any extra text, explanation, or comments.
+  """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+
+    return response.text ?? '{"salary": "Unknown"}';
+  }
+
+  Future<String> getRecommend(String fieldStudy) async {
+    final prompt = """
+      Given the field of study "$fieldStudy", provide job recommendations in Malaysia.
+    The response should be in JSON format like:
+    {
+      "recommendations": [
+        {
+          "title": "Software Engineer",
+          "salary": "RM 3000 - RM 3500",
+          "skills": "Java, Python, C++, MongoDB, Node.js, AWS...",
+          "match": "85% Match | Interest · Skills · Education"
+        }
+      ]
+    }
+    Do NOT include any extra text, explanation, or comments.Only provide 3 jobs and three most important skills.
+  """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+    return response.text ?? '{"recommendations": []}';
+  }
+
+  Future<String> getRelevant(String fieldStudy) async {
+    final prompt = """
+      Given the field of study "$fieldStudy", provide job relevant in Malaysia.
+    The response should be in JSON format like:
+    {
+      "relevant": [
+        {
+          "title": "Software Engineer",
+          "salary": "RM 3000 - RM 3500",
+          "skills": "Java, Python, C++, MongoDB, Node.js, AWS...",
+          "match": "85% Match | Interest · Skills · Education"
+        }
+      ]
+    }
+    Do NOT include any extra text, explanation, or comments.Only provide 3 jobs and three most important skills.
+  """;
+
+    final response = await model.generateContent([Content.text(prompt)]);
+    return response.text ?? '{"relevant": []}';
+  }
+}
