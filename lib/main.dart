@@ -3,6 +3,7 @@ import 'package:careeradvisor_kitahack2025/Page/LogIn.dart';
 import 'package:careeradvisor_kitahack2025/Page/SignUp.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'Page/Checker.dart';
 import 'Page/Courses.dart';
 import 'Page/Home.dart';
@@ -10,9 +11,15 @@ import 'Page/Interview.dart';
 import 'Page/Profile.dart'; // Import the component
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'Services/Provider.dart';
+
 
 Future<void> main() async {
-  runApp(MyApp());
+  runApp(
+      ChangeNotifierProvider(
+          create: (context)=>RecommendationProvider(),
+          child: MyApp(),
+      ));
 }
 
 class MyApp extends StatelessWidget {
