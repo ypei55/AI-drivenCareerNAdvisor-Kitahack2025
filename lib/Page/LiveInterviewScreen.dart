@@ -1,31 +1,16 @@
+import 'dart:ui_web' as ui;
+
 import 'package:camera/camera.dart';
 import 'package:careeradvisor_kitahack2025/Component/mockInterviewHeader.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // List<CameraDescription> cameras = await availableCameras();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  // final List<CameraDescription> cameras;
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mock Interview',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MockInterviewScreen(jobTitle:'jobTile', companyName: 'companyName',responsibilities: '...',jobDesc: '...',),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
+import 'package:flutter_tts/flutter_tts.dart';
+import '../Services/AIServices.dart';
+import 'dart:async';
+import 'dart:html' as html;
+import 'dart:js' as js;
 
 class MockInterviewScreen extends StatefulWidget {
   final bool showNotification;
@@ -42,29 +27,216 @@ class MockInterviewScreen extends StatefulWidget {
 class _MockInterviewScreenState extends State<MockInterviewScreen> {
   CameraController? _cameraController;
   Future<void>? _initializeCameraControllerFuture;
-  bool _micActive = false;
   bool _cameraActive = false;
   bool _permissionsRequested = false;
   final stt.SpeechToText _speech = stt.SpeechToText();
   String _recognizedWords = '';
   List<CameraDescription>? _availableCameras;
+  FlutterTts flutterTts = FlutterTts();
   List<String> interviewQuestions = [];
+  List<String> hints = [];
+  List<String> interviewAnswers = [];
+  Timer? _questionTimer;
+  String hint = '';
+  String userAnswer = '';
+  List<Map<String, String>> interviewData = [];
+
+  late html.VideoElement _recordedVideo;
+  html.MediaRecorder? _mediaRecorder;
+  html.MediaStream? _mediaStream;
+  bool _isRecording = false;
+  String? _recordedVideoUrl;
+  html.Blob? _recordingBlob;
+
+  AIService aiService = AIService();
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
-    _requestPermissions();
-    _getAvailableCameras();
-    _initSpeech();
+    _initializeApp();
   }
 
-  Future<void> _getAvailableCameras()async{
-    try{
-      List<CameraDescription> cameras = await availableCameras();
-      setState((){
-        _availableCameras= cameras;
+  Map<String, List<String>> parseQuestionsAndHints(String response) {
+    List<String> questions = [];
+    List<String> hints = [];
+
+    // Split response by new lines
+    List<String> lines = response.split("\n");
+
+    for (int i = 0; i < lines.length; i++) {
+      String line = lines[i].trim();
+
+      if (line.startsWith("Question ")) {
+        questions.add(line.substring(line.indexOf(":") + 1).trim());
+      } else if (line.startsWith("Hint ")) {
+        hints.add(line.substring(line.indexOf(":") + 1).trim());
+      }
+    }
+
+    return {"questions": questions, "hints": hints};
+  }
+
+  //Reading question with time interval
+  void _startReadingQuestions() async {
+    String aiResponse = await aiService.generateInterviewQuestionsWithHints(
+        widget.jobTitle, widget.companyName, widget.jobDesc, widget.responsibilities);
+    Map<String, List<String>> parsedData = parseQuestionsAndHints(aiResponse);
+
+    setState(() {
+      interviewQuestions = parsedData["questions"] ?? [];
+      hints = parsedData["hints"] ?? [];
+    });
+
+    for (int i = 0; i < interviewQuestions.length; i++) {
+      print("Q: ${interviewQuestions[i]}");
+      print("Hint: ${hints[i]}\n");
+    }
+
+    for (int i = 0; i < interviewQuestions.length; i++) {
+      String question = interviewQuestions[i];
+
+
+      await _speak(question); // Wait until question is spoken completely
+      print(question);
+      setState(() {
+        hint = hints[i];
       });
-    }catch(e){
+      String answer = await _recordAnswer(); // Wait until answer is recorded
+
+      interviewData.add({"question": question, "answer": answer});
+    }
+
+    print(interviewData); // Debug output
+
+    await _speak('The interview session has ended. You can click end button to end the interview session.');
+
+
+  }
+
+
+  Future<void> _speak(String text) async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setPitch(1.0);
+    await flutterTts.speak(text);
+    await flutterTts.awaitSpeakCompletion(true); // Ensures it waits until speaking is done
+  }
+
+  Future<String> _recordAnswer() async {
+    if (!await _speech.initialize()) {
+      return "Speech recognition not available.";
+    }
+
+    setState(() {
+      _recognizedWords = '';
+      userAnswer = "";
+    });
+
+    Completer<String> answerCompleter = Completer<String>();
+
+    _speech.listen(
+      onResult: (result) {
+        setState(() {
+          _recognizedWords = result.recognizedWords; // Append new words
+          userAnswer = result.recognizedWords;
+        });
+      },
+      listenFor: Duration(seconds: 30),
+    );
+
+    await Future.delayed(Duration(seconds: 30)); // Ensure full 30s wait
+    await _speech.stop(); // Stop recording after 30 seconds
+
+    return userAnswer; // Return the recorded answer
+  }
+
+  Future<void> _initializeApp() async {
+    await Permission.camera.request();
+    await Permission.microphone.request();
+    await _getAvailableCameras();
+    _initRecording();
+    _speak('The interview session will start now, there are five questions and you have 1 minutes to answer each questions');
+    _startReadingQuestions();
+    _initSpeech();
+    if (_cameraActive) {
+      _initializeCamera();
+    }
+    _startCameraAndRecording();
+  }
+
+  void _initRecording() {
+    _recordedVideo = html.VideoElement()
+      ..autoplay = false
+      ..muted = false
+      ..width = html.window.innerWidth!
+      ..height = html.window.innerHeight!
+      ..controls = true;
+
+    // ignore: undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory('recorded-video', (int_) => _recordedVideo);
+  }
+
+  Future<void> _startCameraAndRecording() async {
+    try {
+      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia({'video': {'cursor': 'always', 'displaySurface': 'monitor'}, 'audio': {'echoCancellation': true, 'noiseSuppression': true}});
+
+      if (_mediaStream != null) {
+        _recordedVideo.srcObject = _mediaStream;
+        _startRecording(_mediaStream!);
+      }
+    } catch (e) {
+      print('Error starting camera: $e');
+    }
+  }
+
+  void _startRecording(html.MediaStream stream) {
+    _mediaRecorder = html.MediaRecorder(stream);
+    _mediaRecorder!.start();
+    setState(() => _isRecording = true);
+
+    _recordingBlob = html.Blob([]);
+
+    _mediaRecorder!.addEventListener('dataavailable', (event) {
+      _recordingBlob = js.JsObject.fromBrowserObject(event)['data'];
+    }, true);
+
+    _mediaRecorder!.addEventListener('stop', (event) {
+      final url = html.Url.createObjectUrl(_recordingBlob!);
+      setState(() => _recordedVideoUrl = url);
+    });
+  }
+
+  Future<void> _stopRecording() async {
+    _mediaRecorder?.stop();
+    _mediaStream?.getTracks().forEach((track) => track.stop());
+    setState(() {
+      _isRecording = false;
+      _cameraActive = false;
+    });
+
+    _disposeCameraController();
+    Map<String?, String?> responses = {
+      for (var item in interviewData) item["question"]: item["answer"]
+    };
+    String result = await aiService.evaluateInterviewResponses(responses);
+    print(result);
+
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (_recordedVideoUrl != null) {
+      context.go('/interview_result', extra: {
+        'result': result,
+        'videoUrl': _recordedVideoUrl!,
+        'jobTitle': widget.jobTitle
+      });
+    }
+  }
+
+  Future<void> _getAvailableCameras() async {
+    try {
+      List<CameraDescription> cameras = await availableCameras();
+      setState(() {
+        _availableCameras = cameras;
+      });
+    } catch (e) {
       setState(() {
         _availableCameras = [];
       });
@@ -72,56 +244,22 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
     }
   }
 
-    void _initializeCamera() {
-    if(_availableCameras !=null && _availableCameras!.isNotEmpty){
+  void _initializeCamera() {
+    if (_availableCameras != null && _availableCameras!.isNotEmpty) {
       _cameraController = CameraController(
         _availableCameras!.first,
         ResolutionPreset.medium,
       );
       _initializeCameraControllerFuture = _cameraController!.initialize();
-    }else{
+    } else {
       print("No camera found");
     }
-    // _cameraController = CameraController(
-    //   widget.cameras.first,
-    //   ResolutionPreset.medium,
-    // );
-    // _initializeCameraControllerFuture = _cameraController!.initialize();
   }
+
   void _disposeCameraController() {
     _cameraController?.dispose();
     _cameraController = null;
     _initializeCameraControllerFuture = null;
-    // if (_cameraController != null) {
-    //   _cameraController!.dispose();
-    //   _cameraController = null;
-    //   _initializeCameraControllerFuture = null;
-    // }
-  }
-
-  @override
-  void dispose() {
-    _disposeCameraController();
-    super.dispose();
-  }
-
-  Future<void> _requestPermissions() async {
-    if (!_permissionsRequested) {
-      _permissionsRequested = true;
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.microphone,
-        Permission.camera,
-        Permission.storage,
-      ].request();
-
-      if (statuses[Permission.microphone]!.isGranted && statuses[Permission.camera]!.isGranted) {
-        // Permissions granted.
-      }
-      else{
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Microphone, and camera permission are required')),);
-      }
-    }
   }
 
   void _initSpeech() async {
@@ -130,27 +268,18 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       onStatus: (val) => print('onStatus: $val'),
     );
     if (available) {
-      // Speech recognition available.
     } else {
       print("The user has denied the use of speech recognition.");
     }
   }
 
-  void _startListening() async {
-    await _speech.listen(onResult: (result) {
-      setState(() {
-        _recognizedWords = result.recognizedWords;
-      });
-    });
+  @override
+  void dispose() {
+    _disposeCameraController();
+    if (_isRecording) _stopRecording();
+    _mediaStream?.getTracks().forEach((track) => track.stop());
+    super.dispose();
   }
-
-  void _stopListening() async {
-    await _speech.stop();
-    setState(() {
-      _recognizedWords = '';
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +317,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                   color: Colors.white.withOpacity(0.8),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Row(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
@@ -196,72 +325,76 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                       color: Colors.black,
                     ),
                     SizedBox(width: 5),
-                    Padding(
-                      padding: EdgeInsets.all(3.0),
-                      child: Text(
-                        'Provide real case about how you calm down your emosi',
+                    Container(
+                      width: hint == '' ? 15 : 600,
+                      child: Padding(
+                        padding: EdgeInsets.all(3.0),
+                        child: Text(
+                          hint,
+                          maxLines: 5,
+                          softWrap: true,  // Allows text to wrap to the next line
+                          overflow: TextOverflow.visible,  // Ensures it remains visible
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            Positioned(
-              top: 10,
-              right: 40,
-              child: SizedBox(
-                width: 150,
-                height: 100,
+            if (_isRecording)
+              Positioned(
+                top: 10,
+                right: 10,
                 child: Container(
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2,
-                    ),
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Image.asset(
-                    'assets/signlanguage.png',
-                    fit: BoxFit.cover,
+                  child: const Row(
+                    children: [
+                      Icon(Icons.circle, color: Colors.white, size: 12),
+                      SizedBox(width: 5),
+                      Text('REC', style: TextStyle(color: Colors.white)),
+                    ],
                   ),
                 ),
               ),
-            ),
             Positioned(
-              top: 120,
-              right: 40,
+              top: 50,
+              right: 20,
               child: SizedBox(
                 width: 150,
                 height: 100,
-                child: _cameraActive && _availableCameras!=null && _availableCameras!.isNotEmpty
+                child: (_cameraActive && _availableCameras != null && _availableCameras!.isNotEmpty
                     ? (_initializeCameraControllerFuture != null
-                        ? FutureBuilder<void>(
-                            future: _initializeCameraControllerFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                return CameraPreview(_cameraController!);
-                              } else {
-                                return const Center(child: CircularProgressIndicator());
-                              }
-                            },
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: const Center(child: CircularProgressIndicator())))
+                    ? FutureBuilder<void>(
+                  future: _initializeCameraControllerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return CameraPreview(_cameraController!);
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                )
                     : Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.videocam_off,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  child: const Center(child: CircularProgressIndicator()),
+                ))
+                    : Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.videocam_off,
+                      size: 50,
+                      color: Colors.grey,
+                    ),
+                  ),
+                )),
               ),
             ),
             Positioned(
@@ -270,24 +403,8 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
               child: Row(
                 children: [
                   _buildIconButton(
-                    _micActive ? Icons.mic_rounded : Icons.mic_off_rounded,
-                    () {
-                      setState(() {
-                        _micActive = !_micActive;
-                        if (_micActive) {
-                          _startListening();
-                        } else {
-                          _stopListening();
-                          _recognizedWords = '';
-                        }
-                      });
-                    },
-                  ),
-                  _buildIconButton(
-                    _cameraActive
-                        ? Icons.videocam_rounded
-                        : Icons.videocam_off_rounded,
-                    () {
+                    _cameraActive ? Icons.videocam_rounded : Icons.videocam_off_rounded,
+                        () {
                       setState(() {
                         _cameraActive = !_cameraActive;
                         if (_cameraActive) {
@@ -298,9 +415,12 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                       });
                     },
                   ),
-                  _buildIconButton(Icons.fiber_manual_record_rounded, () {
-                    //record this meeting
-                  }),
+                  _buildIconButton(
+                    Icons.stop_rounded,
+                        () {
+                      _stopRecording();
+                    },
+                  ),
                   _buildIconButton(Icons.more_horiz_rounded, () {}),
                 ],
               ),

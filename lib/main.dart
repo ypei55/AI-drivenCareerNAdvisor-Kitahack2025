@@ -1,4 +1,7 @@
 import 'package:careeradvisor_kitahack2025/Page/CheckerResults.dart';
+import 'package:careeradvisor_kitahack2025/Page/InterviewResults.dart';
+import 'package:careeradvisor_kitahack2025/Page/Interview_details.dart';
+import 'package:careeradvisor_kitahack2025/Page/LiveInterviewScreen.dart';
 import 'package:careeradvisor_kitahack2025/Page/LogIn.dart';
 import 'package:careeradvisor_kitahack2025/Page/SignUp.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +61,44 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/interview',
       builder: (context, state) => Interview(),
+    ),
+    GoRoute(
+        path: '/interview_detail',
+      builder: (context, state){
+          final data = state.extra as Map<String, dynamic>;
+          return Interview_details(
+            interview: {
+              ...data, // Keep other keys unchanged
+              'requiredSkills': (data['requiredSkills'] as List<dynamic>?)?.cast<String>() ?? [], // Fix type casting
+            },
+          );
+      }
+    ),
+    GoRoute(
+      path: '/live_interview',
+      builder: (context, state) {
+        final Map<String, dynamic> data = state.extra as Map<String, dynamic>? ?? {};
+
+        return MockInterviewScreen(
+          showNotification: data['showNotification'] ?? false, // Default to false if null
+          jobTitle: data['jobTitle'] ?? 'Unknown Job',
+          companyName: data['companyName'] ?? 'Unknown Company',
+          responsibilities: data['responsibilities'] ?? 'No Responsibilities',
+          jobDesc: data['jobDesc'] ?? 'No Job Description',
+        );
+      },
+    ),
+    GoRoute(
+      path: '/interview_result',
+      builder: (context, state){
+        final extra = state.extra as Map<String, dynamic>?; // Extract 'extra'
+
+        return InterviewResult(
+          result: extra?['result'],
+          videoUrl: extra?['videoUrl'],
+          jobTitle: extra?['jobTitle'],
+        );
+      },
     ),
     GoRoute(
       path: '/courses',

@@ -46,6 +46,7 @@ dependencies:
   syncfusion_flutter_pdf: ^24.1.41
   flutter_dotenv: ^5.2.1
   percent_indicator: ^4.2.4
+  flutter_tts: ^3.6.3
  
 
 dev_dependencies:

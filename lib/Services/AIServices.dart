@@ -89,33 +89,46 @@ class AIService {
     return response.text ?? "Error comparing resume and job description.";
   }
 
-  Future<String> generateInterviewQuestions(String jobTitle, String companyName, String jobDesc, String responsibilities) async {
+  Future<String> generateInterviewQuestionsWithHints(
+      String jobTitle, String companyName, String jobDesc, String responsibilities) async {
     final prompt = """
-    You are an HR interviewer of $companyName who conducting an interview for a fresh graduate applying for the position of $jobTitle.
+  You are an HR interviewer at $companyName conducting an interview for a fresh graduate applying for the position of $jobTitle.
 
-    **Job Description:**
-    $jobDesc
-    
-    **Responsibilities:**
-    $responsibilities
-    
-    Generate 5 relevant interview questions based on the job role.
-    """;
+  **Job Description:**
+  $jobDesc
+
+  **Responsibilities:**
+  $responsibilities
+
+  Generate 5 relevant interview questions based on the job role.
+  For each question, also generate a helpful hint that guides the candidate in answering effectively.
+  
+  Format the response as follows:
+  Question 1: <question>
+  Hint 1: <hint>
+
+  Question 2: <question>
+  Hint 2: <hint>
+
+  ...
+  """;
 
     final response = await model.generateContent([Content.text(prompt)]);
-    return response.text ?? "Error generating questions.";
+    print(response.text);
+    return response.text ?? "Error generating questions and hints.";
   }
 
-  Future<String> evaluateInterviewResponses(Map<String, String> responses) async {
+
+
+  Future<String> evaluateInterviewResponses(Map<String?, String?> responses) async {
     final prompt = """
-    Evaluate the following interview responses, provide feedback, and give recommendations for improvement.
+    Evaluate the following interview responses and provide feedback.
     
     ${responses.entries.map((e) => "**Question:** ${e.key}\n**Response:** ${e.value}").join("\n\n")}
     
     Tasks:
     1. Provide feedback on each response.
-    2. Suggest improvements for each answer.
-    3. Generate a final interview report including:
+    2. Generate a final interview report including:
        - Technical Skills Rating (1-10)
        - Communication Skills Rating (1-10)
        - Overall Score (1-10)
@@ -127,7 +140,6 @@ class AIService {
     1. **Question:** [Question]
        **Interviewee Response:** [Response]
        **Feedback:** [Feedback]
-       **Recommendation:** [Recommendation]
     
     (Repeat for all responses)
     
@@ -138,6 +150,7 @@ class AIService {
     """;
 
     final response = await model.generateContent([Content.text(prompt)]);
+    print(response);
     return response.text ?? "Error evaluating interview.";
   }
 }

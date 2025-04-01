@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:careeradvisor_kitahack2025/Services/AIServices.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -61,17 +60,10 @@ class _CheckerState extends State<Checker> {
         return;
       }
 
-    print("Resume Text: $_resumeText");
-    print("Job Description: $jobDescription");
-
     AIService aiService = AIService();
-    print("AIService initialized with API Key: ${aiService}");
 
     String aiResponse = await aiService.compareResumeAndJobDescription(_resumeText!, jobDescription);
 
-    print("AI Response: $aiResponse");
-
-    print("Navigating to /checkerresults");
     context.go('/checkerresults', extra: aiResponse);
   } catch (e) {
     print("Error during navigation: $e");

@@ -1,5 +1,6 @@
 import 'package:careeradvisor_kitahack2025/Page/Interview_details.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../Component/TopNavBar.dart';
 // void main() {
 //   runApp(const MyApp());
@@ -211,9 +212,7 @@ class Interview extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context, MaterialPageRoute(builder: (context)=> Interview_details(interview:data)),
-                    );
+                    context.go('/interview_detail', extra: data);
                     //Navigate to Interview_details
                   },
                   style: ElevatedButton.styleFrom(

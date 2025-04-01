@@ -1,5 +1,6 @@
 import 'package:careeradvisor_kitahack2025/Page/LiveInterviewScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../Component/TopNavBar.dart';
 
 class Interview_details extends StatelessWidget {
@@ -361,15 +362,23 @@ class JobDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
               ElevatedButton(onPressed: () {
-                Navigator.push(
-                  context, MaterialPageRoute(builder: (context)=> MockInterviewScreen(showNotification:true,jobTitle: jobTitle, companyName: companyName, responsibilities: responsibilities, jobDesc:jobDesc)),
-                );
+                context.push('/live_interview', extra: {
+                  'showNotification': true,  // Boolean
+                  'jobTitle': jobTitle,  // String
+                  'companyName': companyName,  // String
+                  'responsibilities': responsibilities,  // String or List<String>
+                  'jobDesc': jobDesc,  // String
+                });
                 //Navigate to MockInterviewScreen()
                 },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6B00),foregroundColor: Colors.white), child: const Text('Normal Mode'),),
               ElevatedButton(onPressed: () {
-                Navigator.push(
-                  context, MaterialPageRoute(builder: (context)=> MockInterviewScreen(showNotification: false, jobTitle: jobTitle, companyName: companyName, responsibilities:responsibilities, jobDesc:jobDesc)),
-                );
+                context.push('/live_interview', extra: {
+                  'showNotification': true,  // Boolean
+                  'jobTitle': jobTitle,  // String
+                  'companyName': companyName,  // String
+                  'responsibilities': responsibilities,  // String or List<String>
+                  'jobDesc': jobDesc,  // String
+                });
               },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD9D9D9),foregroundColor: Colors.white), child: const Text('Intensive Mode'),),
 
                 ],
