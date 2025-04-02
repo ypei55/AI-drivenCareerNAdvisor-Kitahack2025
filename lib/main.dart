@@ -92,6 +92,7 @@ final GoRouter _router = GoRouter(
           companyName: data['companyName'] ?? 'Unknown Company',
           responsibilities: data['responsibilities'] ?? 'No Responsibilities',
           jobDesc: data['jobDesc'] ?? 'No Job Description',
+          isNormal: data['isNormal'] ?? true,
         );
       },
     ),

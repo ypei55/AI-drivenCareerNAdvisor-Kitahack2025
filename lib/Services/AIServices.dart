@@ -127,7 +127,7 @@ class AIService {
     ${responses.entries.map((e) => "**Question:** ${e.key}\n**Response:** ${e.value}").join("\n\n")}
     
     Tasks:
-    1. Provide feedback on each response.
+    1. Provide feedback and score on each response.
     2. Generate a final interview report including:
        - Technical Skills Rating (1-10)
        - Communication Skills Rating (1-10)
@@ -140,6 +140,7 @@ class AIService {
     1. **Question:** [Question]
        **Interviewee Response:** [Response]
        **Feedback:** [Feedback]
+       **Score:** [Score]
     
     (Repeat for all responses)
     

@@ -367,7 +367,8 @@ class JobDetails extends StatelessWidget {
                   'jobTitle': jobTitle,  // String
                   'companyName': companyName,  // String
                   'responsibilities': responsibilities,  // String or List<String>
-                  'jobDesc': jobDesc,  // String
+                  'jobDesc': jobDesc,
+                  'isNormal': true// String
                 });
                 //Navigate to MockInterviewScreen()
                 },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6B00),foregroundColor: Colors.white), child: const Text('Normal Mode'),),
@@ -378,6 +379,7 @@ class JobDetails extends StatelessWidget {
                   'companyName': companyName,  // String
                   'responsibilities': responsibilities,  // String or List<String>
                   'jobDesc': jobDesc,  // String
+                  'isNormal': false
                 });
               },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD9D9D9),foregroundColor: Colors.white), child: const Text('Intensive Mode'),),
 

@@ -36,7 +36,7 @@ class InterviewResult extends StatelessWidget {
               RecordedSession(videoUrl),
               SizedBox(height: 25),
               // Divider(height: 10,thickness: 1),
-              ScoreDetails(),
+              ScoreDetails(result: result,),
             ],
           ),
         ),
@@ -146,6 +146,11 @@ class RecordedSession extends StatelessWidget {
   }
 }
 class ScoreDetails extends StatelessWidget {
+
+
+  String result;
+  ScoreDetails({super.key, required this.result});
+
   @override
   Widget build(BuildContext context) {
     List<AccordionItemData> accordionItems = [
@@ -159,7 +164,7 @@ class ScoreDetails extends StatelessWidget {
         score: '74%',
         typeOfInterview: 'AI based interview',
         levelOfInterview: 'Medium',
-        numberOfQuestions: 8,
+        numberOfQuestions: 5,
         questionAnswerScores: [
           QuestionAnswerScore(
             question: '1. Hello, I am Lucy, and I will be interviewing you for the Python job. Can you please introduce yourself?',
@@ -190,7 +195,8 @@ class ScoreDetails extends StatelessWidget {
       children: [
         Text('Scores', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         SizedBox(height: 10),
-        AccordionWidget(items: accordionItems)
+        //AccordionWidget(items: accordionItems)
+        Text(result)
       ],
     );
   }

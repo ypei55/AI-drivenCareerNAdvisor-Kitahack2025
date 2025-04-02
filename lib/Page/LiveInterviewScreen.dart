@@ -18,8 +18,9 @@ class MockInterviewScreen extends StatefulWidget {
   final String companyName;
   final String responsibilities;
   final String jobDesc;
+  final bool isNormal;
   // final List<CameraDescription> cameras;
-  const MockInterviewScreen({super.key, required this.jobTitle, required this.companyName,this.showNotification=true, required this.responsibilities, required this.jobDesc});
+  const MockInterviewScreen({super.key, required this.jobTitle, required this.companyName,this.showNotification=true, required this.responsibilities, required this.jobDesc, required this.isNormal});
   @override
   _MockInterviewScreenState createState() => _MockInterviewScreenState();
 }
@@ -101,6 +102,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       setState(() {
         hint = hints[i];
       });
+      await _releaseMicrophone();
       String answer = await _recordAnswer(); // Wait until answer is recorded
 
       interviewData.add({"question": question, "answer": answer});
@@ -177,8 +179,10 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
 
   Future<void> _startCameraAndRecording() async {
     try {
-      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia({'video': {'cursor': 'always', 'displaySurface': 'monitor'}, 'audio': {'echoCancellation': true, 'noiseSuppression': true}});
-
+      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia({
+        'video': true,
+        'audio': true
+      });
       if (_mediaStream != null) {
         _recordedVideo.srcObject = _mediaStream;
         _startRecording(_mediaStream!);
@@ -281,6 +285,10 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
     super.dispose();
   }
 
+  Future<void> _releaseMicrophone() async {
+    _mediaStream?.getAudioTracks().forEach((track) => track.stop());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -317,7 +325,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                   color: Colors.white.withOpacity(0.8),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: widget.isNormal ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
@@ -338,7 +346,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                       ),
                     ),
                   ],
-                ),
+                ) : Container()
               ),
             ),
             if (_isRecording)
