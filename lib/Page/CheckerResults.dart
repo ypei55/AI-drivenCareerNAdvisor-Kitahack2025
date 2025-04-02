@@ -163,24 +163,7 @@ class CheckerResults extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: 250,
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text(
-                        "Download",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
