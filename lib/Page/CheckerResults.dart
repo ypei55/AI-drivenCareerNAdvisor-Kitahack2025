@@ -16,9 +16,14 @@ class CheckerResults extends StatelessWidget {
     };
 
     try {
-      String cleanText(String text) {
-        return text.replaceAll('**', '').trim();
+      String cleanText(String text, {bool isList = false}) {
+      String cleaned = text.replaceAll('**', '').trim();
+      if (isList) {
+        // Replace asterisks with hyphens for bullet points in both Missing Keywords and Suggestions
+        cleaned = cleaned.replaceAll('* ', '- ');
       }
+      return cleaned;
+    }
 
       if (response.contains('Matching Score:')) {
         sections['Matching Score'] = cleanText(
@@ -29,12 +34,14 @@ class CheckerResults extends StatelessWidget {
       if (response.contains('Missing Keywords:')) {
         sections['Missing Keywords'] = cleanText(
           response.split('Missing Keywords:')[1].split('Suggestions:')[0],
+          isList: true,
         );
       }
 
       if (response.contains('Suggestions:')) {
         sections['Suggestions'] = cleanText(
           response.split('Suggestions:')[1].split('Revised Resume:')[0],
+          isList: true,
         );
       }
 
