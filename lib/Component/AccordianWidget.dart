@@ -92,8 +92,8 @@ class _AccordionWidgetState extends State<AccordionWidget> {
                               const SizedBox(height: 10),
                               if (qa.answer.isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 16.0),
-                                  child: Text(qa.answer, style: const TextStyle(color: Color(0xFF7F7F7F),fontSize: 15),),
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Text('Answer: ${qa.answer}', style: const TextStyle(color: Color(0xFF7F7F7F),fontSize: 15),),
                                 ),
                               const SizedBox(height: 10),
                               if(qa.feedback.isNotEmpty)

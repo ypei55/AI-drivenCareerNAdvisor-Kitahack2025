@@ -24,7 +24,7 @@ class InterviewResult extends StatelessWidget {
       appBar: AppBar(
         title:  Wrap(
           children: [
-            const Text('Practice Mock Interview for ',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800),),
+            const Text('Summary of Practice Mock Interview for ',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800),),
             Text(jobTitle, style: const TextStyle(color: Color(0xFFFF6B00),fontWeight: FontWeight.w800),),
           ],)
       ),
