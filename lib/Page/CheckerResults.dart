@@ -8,45 +8,54 @@ class CheckerResults extends StatelessWidget {
   CheckerResults({super.key, required this.aiResponse});
 
   Map<String, String> _parseAIResponse(String response) {
-  Map<String, String> sections = {
-    'Matching Score': 'N/A',
-    'Missing Keywords': 'N/A',
-    'Suggestions': 'N/A',
-    'Revised Resume': 'N/A',
-  };
+    Map<String, String> sections = {
+      'Matching Score': 'N/A',
+      'Missing Keywords': 'N/A',
+      'Suggestions': 'N/A',
+      'Revised Resume': 'N/A',
+    };
 
-  try {
-    if (response.contains('**Matching Score:**') && response.contains('**Missing Keywords:**')) {
-      sections['Matching Score'] = response
-          .split('**Matching Score:**')[1]
-          .split('**Missing Keywords:**')[0]
-          .trim();
+    try {
+      String cleanText(String text, {bool isList = false}) {
+      String cleaned = text.replaceAll('**', '').trim();
+      if (isList) {
+        // Replace asterisks with hyphens for bullet points in both Missing Keywords and Suggestions
+        cleaned = cleaned.replaceAll('* ', '- ');
+      }
+      return cleaned;
     }
 
-    if (response.contains('**Missing Keywords:**') && response.contains('**Suggestions:**')) {
-      sections['Missing Keywords'] = response
-          .split('**Missing Keywords:**')[1]
-          .split('**Suggestions:**')[0]
-          .trim();
+      if (response.contains('Matching Score:')) {
+        sections['Matching Score'] = cleanText(
+          response.split('Matching Score:')[1].split('Missing Keywords:')[0],
+        );
+      }
+
+      if (response.contains('Missing Keywords:')) {
+        sections['Missing Keywords'] = cleanText(
+          response.split('Missing Keywords:')[1].split('Suggestions:')[0],
+          isList: true,
+        );
+      }
+
+      if (response.contains('Suggestions:')) {
+        sections['Suggestions'] = cleanText(
+          response.split('Suggestions:')[1].split('Revised Resume:')[0],
+          isList: true,
+        );
+      }
+
+      if (response.contains('Revised Resume:')) {
+        sections['Revised Resume'] = cleanText(
+          response.split('Revised Resume:')[1],
+        );
+      }
+    } catch (e) {
+      print('Error parsing AI response: $e');
     }
 
-    if (response.contains('**Suggestions:**') && response.contains('**Revised Resume:**')) {
-      sections['Suggestions'] = response
-          .split('**Suggestions:**')[1]
-          .split('**Revised Resume:**')[0]
-          .trim();
-    }
-
-    if (response.contains('**Revised Resume:**')) {
-      sections['Revised Resume'] = response.split('**Revised Resume:**')[1].trim();
-    }
-  } catch (e) {
-    // Handle any unexpected errors during parsing
-    print('Error parsing AI response: $e');
+    return sections;
   }
-
-  return sections;
-}
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +81,20 @@ class CheckerResults extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Checking Results",
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFFF6B00)),
+                  Center(
+                    child: const Text(
+                      "Checking Results",
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFFF6B00)),
+                    ),
                   ),
                   const SizedBox(height: 15),
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -136,12 +149,14 @@ class CheckerResults extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  const Text(
-                    "Revised Version",
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFFF6B00)),
+                  Center(
+                    child: const Text(
+                      "Revised Version",
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFFF6B00)),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Container(
@@ -163,24 +178,7 @@ class CheckerResults extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: 250,
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text(
-                        "Download",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),

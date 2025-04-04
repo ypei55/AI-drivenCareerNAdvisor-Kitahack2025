@@ -15,6 +15,7 @@ class Checker extends StatefulWidget {
 class _CheckerState extends State<Checker> {
   String? _fileName;
   bool _isHovering = false;
+  bool _isLoading = false;
   TextEditingController _jobDescriptionController = TextEditingController();
   String? _resumeText;
 
@@ -43,35 +44,49 @@ class _CheckerState extends State<Checker> {
   }
 
   Future<void> _checkResume() async {
-  try {
-    if (_resumeText == null || _resumeText!.isEmpty) {
+    try {
+      if (_resumeText == null || _resumeText!.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Please upload a resume first.")),
         );
         return;
       }
 
-    String jobDescription = _jobDescriptionController.text;
+      String jobDescription = _jobDescriptionController.text;
 
-    if (jobDescription.isEmpty) {
+      if (jobDescription.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Please enter a job description.")),
         );
         return;
       }
 
-    AIService aiService = AIService();
+      setState(() {
+        _isLoading = true;
+      });
 
-    String aiResponse = await aiService.compareResumeAndJobDescription(_resumeText!, jobDescription);
+      AIService aiService = AIService();
 
-    context.go('/checkerresults', extra: aiResponse);
-  } catch (e) {
-    print("Error during navigation: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("An error occurred: $e")),
-    );
+      String aiResponse = await aiService.compareResumeAndJobDescription(
+          _resumeText!, jobDescription);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (!mounted) return;
+      context.go('/checkerresults', extra: aiResponse);
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print("Error during navigation: $e");
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred: $e")),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +115,9 @@ class _CheckerState extends State<Checker> {
                           height: 350,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: _isHovering ? Colors.orangeAccent : Colors.orange,
+                              color: _isHovering
+                                  ? Colors.orangeAccent
+                                  : Colors.orange,
                             ),
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
@@ -111,18 +128,22 @@ class _CheckerState extends State<Checker> {
                               Icon(
                                 Icons.cloud_upload,
                                 size: 200,
-                                color: _isHovering ? Colors.orange : Colors.grey[400],
+                                color: _isHovering
+                                    ? Colors.orange
+                                    : Colors.grey[400],
                               ),
                               SizedBox(height: 10),
                               Text(
                                 _fileName ?? "Drop, Upload or Paste Resume",
-                                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                    fontSize: 25, fontWeight: FontWeight.w600),
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(height: 5),
                               Text(
                                 "Supported formats: .pdf, .docx, .doc",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                             ],
                           ),
@@ -134,7 +155,8 @@ class _CheckerState extends State<Checker> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Job Description",
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
+                        style: TextStyle(
+                            fontSize: 28, fontWeight: FontWeight.w900),
                       ),
                     ),
                     SizedBox(height: 10),
@@ -152,7 +174,8 @@ class _CheckerState extends State<Checker> {
                         maxLines: 4,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: "Write or paste job description about your desired role on job vacancy",
+                          hintText:
+                              "Write or paste job description about your desired role on job vacancy",
                           hintStyle: TextStyle(color: Colors.grey[500]),
                         ),
                       ),
@@ -162,17 +185,27 @@ class _CheckerState extends State<Checker> {
                       width: 250,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: _checkResume,
+                        onPressed: _isLoading ? null : _checkResume,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Text(
-                          "Checking",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
+                        child: _isLoading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : Text(
+                                "Checking",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
                       ),
                     ),
                   ],
