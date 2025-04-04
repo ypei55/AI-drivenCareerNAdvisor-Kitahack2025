@@ -28,7 +28,7 @@ class MockInterviewScreen extends StatefulWidget {
 class _MockInterviewScreenState extends State<MockInterviewScreen> {
   CameraController? _cameraController;
   Future<void>? _initializeCameraControllerFuture;
-  bool _cameraActive = false;
+  bool _cameraActive = true;
   bool _permissionsRequested = false;
   final stt.SpeechToText _speech = stt.SpeechToText();
   String _recognizedWords = '';
@@ -152,8 +152,9 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   }
 
   Future<void> _initializeApp() async {
-    await Permission.camera.request();
-    await Permission.microphone.request();
+    _requestPermissions();
+    // await Permission.camera.request();
+    // await Permission.microphone.request();
     await _getAvailableCameras();
     _initRecording();
     _speak('The interview session will start now, there are five questions and you have 1 minutes to answer each questions');
@@ -179,11 +180,9 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
 
   Future<void> _startCameraAndRecording() async {
     try {
-      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia({
-        'video': true,
-        'audio': true
-      });
+      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia({'video': {'cursor': 'always', 'displaySurface': 'monitor'}, 'audio': {'echoCancellation': true, 'noiseSuppression': true}});
       if (_mediaStream != null) {
+
         _recordedVideo.srcObject = _mediaStream;
         _startRecording(_mediaStream!);
       }
@@ -193,6 +192,14 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   }
 
   void _startRecording(html.MediaStream stream) {
+    try{    
+      // Ensure audio is enabled in MediaRecorder options
+      final options = {
+        'audioBitsPerSecond': 128000,
+        'videoBitsPerSecond': 2500000,
+        'mimeType': 'video/webm;codecs=vp9,opus' // Explicit codec specification
+      };
+    
     _mediaRecorder = html.MediaRecorder(stream);
     _mediaRecorder!.start();
     setState(() => _isRecording = true);
@@ -207,6 +214,9 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       final url = html.Url.createObjectUrl(_recordingBlob!);
       setState(() => _recordedVideoUrl = url);
     });
+  }catch(e){
+    print('Recording error: $e');
+  }
   }
 
   Future<void> _stopRecording() async {
@@ -233,6 +243,27 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       });
     }
   }
+
+    Future<void> _requestPermissions() async {
+    if (!_permissionsRequested) {
+      _permissionsRequested = true;
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.microphone,
+        Permission.camera,
+        Permission.storage,
+      ].request();
+
+
+      if (statuses[Permission.microphone]!.isGranted && statuses[Permission.camera]!.isGranted&& statuses[Permission.storage]!.isGranted) {
+        // Permissions granted.
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Microphone, camera, and storage permission are required')),);
+      }
+    }
+  }
+
 
   Future<void> _getAvailableCameras() async {
     try {
@@ -328,10 +359,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                 child: widget.isNormal ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.info_outlined,
-                      color: Colors.black,
-                    ),
+                    Icon(Icons.info_outlined,color: Colors.black),
                     SizedBox(width: 5),
                     Container(
                       width: hint == '' ? 15 : 600,

@@ -137,17 +137,17 @@ class AIService {
     
     **Interview Evaluations:**
     
-    1. **Question:** [Question]
-       **Interviewee Response:** [Response]
-       **Feedback:** [Feedback]
-       **Score:** [Score]
+    1. Question: [Question]
+       Interviewee Response: [Response]
+       Feedback: [Feedback]
+       Score: [Score]
     
     (Repeat for all responses)
     
-    **Final Interview Report:**
-    - **Technical Skills Rating:** [Score]/10
-    - **Communication Skills Rating:** [Score]/10
-    - **Overall Score:** [Score]/10
+    Final Interview Report:
+    - Technical Skills Rating: [Score]/10
+    - Communication Skills Rating: [Score]/10
+    - Overall Score: [Score]/10
     """;
 
     final response = await model.generateContent([Content.text(prompt)]);

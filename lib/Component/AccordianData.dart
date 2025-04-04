@@ -19,11 +19,13 @@ class AccordionItemData {
 class QuestionAnswerScore {
   final String question;
   final String answer;
+  final String feedback;
   final int score;
 
   QuestionAnswerScore({
     required this.question,
     required this.answer,
+    required this.feedback,
     required this.score,
   });
 }

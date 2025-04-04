@@ -23,7 +23,7 @@ class Interview_details extends StatelessWidget {
     'InterviewLevel' : 'Medium',
     'TotalQuestion' : '5' 
   };
-    final Map <String, String> hrIV = {
+  final Map <String, String> hrIV = {
     'InterviewType' : 'Virtual Interview',
     'InterviewLevel' : 'Not added',
     'TotalQuestion' : 'Not added' 
@@ -36,7 +36,7 @@ class Interview_details extends StatelessWidget {
     'Location': 'Chennai',
     'Openings': '5',
   };
-        List<Map<String, dynamic>> jobHistory = [
+  List<Map<String, dynamic>> jobHistory = [
       {
         'role': 'Software Engineer',
         'date': 'Dec 20, 2024',
@@ -70,8 +70,6 @@ class Interview_details extends StatelessWidget {
       appBar: TopNavBar(),
       backgroundColor: const Color(0xFFFFF5EC),
       body: 
-      // SingleChildScrollView(
-      //   child: 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
           child:
@@ -94,7 +92,6 @@ class Interview_details extends StatelessWidget {
                 ],
               ),
         ),
-      // ),
     );
   }
 }
@@ -195,7 +192,7 @@ class JobDetails extends StatelessWidget {
   final String jobDesc;
   final String responsibilities;
   final List <String> requiredSkills;
-  final Map<String, String> jobInfo; // Receive jobInfo as a parameter
+  final Map<String, String> jobInfo;
   final Map<String, String> mcqTest;
   final Map<String, String> techIV;
   final Map<String, String> hrIV;
@@ -206,7 +203,6 @@ class JobDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // height: MediaQuery.of(context).size.width * 0.96,
       height: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -226,58 +222,43 @@ class JobDetails extends StatelessWidget {
               Text(jobTitle,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.w900)),
               const SizedBox(height: 4),
               Text('-- $companyName',style: const TextStyle(fontSize: 13,fontWeight: FontWeight.w300, color: Color(0xFF747474))),
-              // const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
-  flex: 2,
-  child: GridView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      childAspectRatio: 10,
-    ),
-    itemCount: jobInfo.length,
-    itemBuilder: (context, index) {
-      final entry = jobInfo.entries.toList()[index];
-      return Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            left: BorderSide(
-              color: Color(0xFFFF6B00),
-              width: 2.0,
-            ),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: RichText( // Use RichText
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '${entry.key}: ',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF747474),
-                  ),
-                ),
-                TextSpan(
-                  text: entry.value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF747474),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  ),
-),
+                    flex: 2,
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 10,
+                        ),
+                        itemCount: jobInfo.length,
+                        itemBuilder: (context, index) {
+                          final entry = jobInfo.entries.toList()[index];
+                          return Container(
+                            decoration: const BoxDecoration(
+                              border: Border(left: BorderSide(color: Color(0xFFFF6B00),width: 2.0),
+                              ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: RichText(text: TextSpan(
+                                  children: [
+                                    TextSpan(text: '${entry.key}: ',style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Color(0xFF747474),
+                                    ),
+                                    ),
+                                    TextSpan(text: entry.value,style: const TextStyle(fontSize: 14,color: Color(0xFF747474),
+                                    ),
+                                  ),
+                                 ],
+                                ),
+                               ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
 
                     Expanded(
                       flex: 1, // Image takes 1/3 of space
@@ -310,9 +291,6 @@ class JobDetails extends StatelessWidget {
               const SizedBox(height: 10),
               const Text('Required Skills : ',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),),
               const SizedBox(height: 4),
-              // const Text('- Google Flutter'),
-              // const Text('- Google Cloud'),
-              // const Text('- Data Structures and Algorithms'),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: requiredSkills.map((skill)=>Text('- $skill')).toList(),
@@ -361,24 +339,24 @@ class JobDetails extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                //Navigate to MockInterviewScreen()
               ElevatedButton(onPressed: () {
                 context.push('/live_interview', extra: {
-                  'showNotification': true,  // Boolean
-                  'jobTitle': jobTitle,  // String
-                  'companyName': companyName,  // String
-                  'responsibilities': responsibilities,  // String or List<String>
+                  'showNotification': true,
+                  'jobTitle': jobTitle,
+                  'companyName': companyName, 
+                  'responsibilities': responsibilities,
                   'jobDesc': jobDesc,
-                  'isNormal': true// String
+                  'isNormal': true
                 });
-                //Navigate to MockInterviewScreen()
                 },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6B00),foregroundColor: Colors.white), child: const Text('Normal Mode'),),
               ElevatedButton(onPressed: () {
                 context.push('/live_interview', extra: {
-                  'showNotification': true,  // Boolean
-                  'jobTitle': jobTitle,  // String
-                  'companyName': companyName,  // String
-                  'responsibilities': responsibilities,  // String or List<String>
-                  'jobDesc': jobDesc,  // String
+                  'showNotification': true, 
+                  'jobTitle': jobTitle,
+                  'companyName': companyName, 
+                  'responsibilities': responsibilities,
+                  'jobDesc': jobDesc, 
                   'isNormal': false
                 });
               },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD9D9D9),foregroundColor: Colors.white), child: const Text('Intensive Mode'),),
