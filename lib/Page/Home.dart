@@ -21,108 +21,6 @@ class Home extends StatefulWidget implements PreferredSizeWidget {
 class _HomeState extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
   final AIService apiService = AIService();
-  List<int> jobOpenings = [0,0,0,0,0];
-  List<String> skills = [];
-  List<String> companies = [];
-  String salary='';
-
-  void _onSearch() async {
-    String query = _searchController.text.trim();
-    if (query.isEmpty) return;
-
-    try {
-      String jsonData = await apiService.getJobOpenings(query);
-      String skillJsonData = await apiService.getCommonSkills(query);
-      String companyJsonData = await apiService.getTopHiringCompanies(query);
-      String salaryJsonData = await apiService.getSalary(query);
-
-      // Debugging: Print raw API responses
-      print("Raw Job Openings API Response: ${jsonData.runtimeType} -> $jsonData");
-      print("Raw Skills API Response: ${skillJsonData.runtimeType} -> $skillJsonData");
-      print("Raw Companies API Response: ${companyJsonData.runtimeType} -> $companyJsonData");
-      print("Raw Salary API Response: ${salaryJsonData.runtimeType} -> $salaryJsonData");
-
-      // Ensure API response is a valid JSON string
-      String cleanJson(String response) {
-        return response.replaceAll(RegExp(r'```json|```'), '').trim();
-      }
-
-      // Validate if the response is JSON or contains unexpected formatting
-      dynamic parseJson(String response) {
-        response = cleanJson(response);
-        if (!response.startsWith('{') && !response.startsWith('[')) {
-          throw FormatException("Unexpected response format: Not valid JSON");
-        }
-        return jsonDecode(response);
-      }
-
-      Map<String, dynamic> jobData = parseJson(jsonData);
-      Map<String, dynamic> skillData = parseJson(skillJsonData);
-      Map<String, dynamic> companyData = parseJson(companyJsonData);
-      Map<String, dynamic> salaryData = parseJson(salaryJsonData);
-
-      // Handle API error responses
-      if (jobData.containsKey('error')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch job data.")));
-        return;
-      }
-
-      if (!skillData.containsKey('skills') || skillData['skills'] is! List) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch skills.")));
-        return;
-      }
-
-      if (!companyData.containsKey('companies') || companyData['companies'] is! List) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch hiring companies.")));
-        return;
-      }
-
-      if (!salaryData.containsKey('salary')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch salary.")));
-        return;
-      }
-
-      // Update state with validated data
-      setState(() {
-        jobOpenings = [
-          jobData['2020'] ?? 0,
-          jobData['2021'] ?? 0,
-          jobData['2022'] ?? 0,
-          jobData['2023'] ?? 0,
-          jobData['2024'] ?? 0,
-        ];
-
-        skills = List<String>.from(skillData['skills']);
-
-        companies = List<String>.from(companyData['companies']);
-         salary = salaryData['salary'];
-      });
-    } catch (e) {
-      print("JSON Decode Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Invalid response format.")));
-    }
-  }
-
-  List<BarChartGroupData> _getBarGroups() {
-    return List.generate(jobOpenings.length, (index) {
-      return BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-            toY: jobOpenings[index].toDouble(),
-            color: Colors.orange,
-            width: 20,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ],
-      );
-    });
-  }
 
   List<String> filterOptions = [
     "High salary",
@@ -139,6 +37,122 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> recommended = Provider.of<RecommendationProvider>(context).recommended;
     List<Map<String, dynamic>> relevant = Provider.of<RecommendationProvider>(context).relevant;
+    List<int> jobOpenings = Provider.of<RecommendationProvider>(context).jobOpenings;
+    List<String> skills = Provider.of<RecommendationProvider>(context).skills;
+    List<String> companies = Provider.of<RecommendationProvider>(context).companies;
+    String salary=Provider.of<RecommendationProvider>(context).salary;
+
+    Future<void> _onSearch() async {
+      String query = _searchController.text.trim();
+      if (query.isEmpty) return;
+
+      try {
+        String jsonData = await apiService.getJobOpenings(query);
+        String skillJsonData = await apiService.getCommonSkills(query);
+        String companyJsonData = await apiService.getTopHiringCompanies(query);
+        String salaryJsonData = await apiService.getSalary(query);
+
+        // Debugging: Print raw API responses
+        print("Raw Job Openings API Response: ${jsonData.runtimeType} -> $jsonData");
+        print("Raw Skills API Response: ${skillJsonData.runtimeType} -> $skillJsonData");
+        print("Raw Companies API Response: ${companyJsonData.runtimeType} -> $companyJsonData");
+        print("Raw Salary API Response: ${salaryJsonData.runtimeType} -> $salaryJsonData");
+
+        // Ensure API response is a valid JSON string
+        String cleanJson(String response) {
+          return response.replaceAll(RegExp(r'```json|```'), '').trim();
+        }
+
+        // Validate if the response is JSON or contains unexpected formatting
+        dynamic parseJson(String response) {
+          response = cleanJson(response);
+          if (!response.startsWith('{') && !response.startsWith('[')) {
+            throw FormatException("Unexpected response format: Not valid JSON");
+          }
+          return jsonDecode(response);
+        }
+
+        Map<String, dynamic> jobData = parseJson(jsonData);
+        Map<String, dynamic> skillData = parseJson(skillJsonData);
+        Map<String, dynamic> companyData = parseJson(companyJsonData);
+        Map<String, dynamic> salaryData = parseJson(salaryJsonData);
+
+        // Handle API error responses
+        if (jobData.containsKey('error')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to fetch job data.")));
+          return;
+        }
+
+        if (!skillData.containsKey('skills') || skillData['skills'] is! List) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to fetch skills.")));
+          return;
+        }
+
+        if (!companyData.containsKey('companies') || companyData['companies'] is! List) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to fetch hiring companies.")));
+          return;
+        }
+
+        if (!salaryData.containsKey('salary')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to fetch salary.")));
+          return;
+        }
+
+        // Update state with validated data
+        setState(() {
+          jobOpenings = [
+            jobData['2020'] ?? 0,
+            jobData['2021'] ?? 0,
+            jobData['2022'] ?? 0,
+            jobData['2023'] ?? 0,
+            jobData['2024'] ?? 0,
+          ];
+
+          skills = List<String>.from(skillData['skills']);
+
+          companies = List<String>.from(companyData['companies']);
+          salary = salaryData['salary'];
+        });
+
+        Provider.of<RecommendationProvider>(context, listen: false)
+            .updateJobOpenings(jobOpenings);
+
+        Provider.of<RecommendationProvider>(context, listen: false)
+            .updateSkills(skills);
+
+        Provider.of<RecommendationProvider>(context, listen: false)
+            .updateCompanies(companies);
+
+        Provider.of<RecommendationProvider>(context, listen: false)
+            .updateSalary(salary);
+
+      } catch (e) {
+        print("JSON Decode Error: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Invalid response format.")));
+      }
+    }
+
+    List<BarChartGroupData> _getBarGroups() {
+      return List.generate(jobOpenings.length, (index) {
+        return BarChartGroupData(
+          x: index,
+          barRods: [
+            BarChartRodData(
+              toY: jobOpenings[index].toDouble(),
+              color: Colors.orange,
+              width: 20,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ],
+        );
+      });
+    }
+
     return Scaffold(
       appBar: TopNavBar(),
       body: SingleChildScrollView(
@@ -221,7 +235,24 @@ class _HomeState extends State<Home> {
                               color:Colors.grey
                             )),
                             leading: Icon(Icons.search,color: Colors.grey,),
-                            onSubmitted: (_)=>_onSearch(),
+                            onSubmitted: (_) async{
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) =>
+                                      Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                              );
+                              try{
+                                await _onSearch();
+                              }
+                              finally{
+                                if (Navigator.of(context).canPop()) {
+                                  Navigator.of(context).pop();
+                                }
+                              }
+                            }
                           )
                         ),
                         SizedBox(

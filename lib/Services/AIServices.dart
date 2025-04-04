@@ -6,7 +6,7 @@ class AIService {
 
   AIService() {
     model = GenerativeModel(
-        model: 'gemini-1.5-pro',
+        model: 'gemini-2.0-flash',
         apiKey: 'AIzaSyAod3bstAG3bzu5jjOjHuJHcyuUBNvjPFU');
   }
 
@@ -220,42 +220,42 @@ class AIService {
     return response.text ?? '{"salary": "Unknown"}';
   }
 
-  Future<String> getRecommend(String fieldStudy) async {
+  Future<String> getRecommend(String fieldStudy,String jobRole,String hardSkill) async {
     final prompt = """
-      Given the field of study "$fieldStudy", provide job recommendations in Malaysia.
+       Given the field of study "$fieldStudy", job role "$jobRole", and hard skills "$hardSkill", provide job recommendations in Malaysia.
     The response should be in JSON format like:
     {
       "recommendations": [
         {
           "title": "Software Engineer",
           "salary": "RM 3000 - RM 3500",
-          "skills": "Java, Python, C++, MongoDB, Node.js, AWS...",
+          "skills": "Java, Python, C++",
           "match": "85% Match | Interest · Skills · Education"
         }
       ]
     }
-    Do NOT include any extra text, explanation, or comments.Only provide 3 jobs and three most important skills.
+    Only provide 3 jobs and the three most important skills.The word of title just 3.
   """;
 
     final response = await model.generateContent([Content.text(prompt)]);
     return response.text ?? '{"recommendations": []}';
   }
 
-  Future<String> getRelevant(String fieldStudy) async {
+  Future<String> getRelevant(String fieldStudy,String jobRole,String hardSkill) async {
     final prompt = """
-      Given the field of study "$fieldStudy", provide job relevant in Malaysia.
+      Given the field of study "$fieldStudy", job role "$jobRole", and hard skills "$hardSkill", provide job relevancy in Malaysia.
     The response should be in JSON format like:
     {
       "relevant": [
         {
           "title": "Software Engineer",
           "salary": "RM 3000 - RM 3500",
-          "skills": "Java, Python, C++, MongoDB, Node.js, AWS...",
+          "skills": "Java, Python, C++",
           "match": "85% Match | Interest · Skills · Education"
         }
       ]
     }
-    Do NOT include any extra text, explanation, or comments.Only provide 3 jobs and three most important skills.
+    Only provide 3 jobs and the three most important skills.The word of title just 3.
   """;
 
     final response = await model.generateContent([Content.text(prompt)]);

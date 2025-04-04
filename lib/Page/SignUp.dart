@@ -19,8 +19,14 @@ class SignUp extends StatefulWidget implements PreferredSizeWidget {
 
 class _SignUpState extends State<SignUp> {
   final TextEditingController _fieldStudyController = TextEditingController();
+  final TextEditingController _jobRoleController = TextEditingController();
+  final TextEditingController _hardSkillController = TextEditingController();
   List<Map<String, dynamic>> recommended = [];
   List<Map<String, dynamic>> relevant = [];
+  List<int> jobOpenings = [];
+  List<String> skills = [];
+  List<String> companies = [];
+  String salary='';
   final AIService apiService = AIService();
 
   String cleanJson(String response) {
@@ -37,14 +43,18 @@ class _SignUpState extends State<SignUp> {
     return jsonDecode(response);
   }
 
-  void _onSearch() async {
+  Future<void> _onSearch() async {
     String query = _fieldStudyController.text.trim();
-    if (query.isEmpty) return;
+    String query1 = _jobRoleController.text.trim();
+    String query2 = _hardSkillController.text.trim();
+
+    if (query.isEmpty || query1.isEmpty || query2.isEmpty)
+      return;
 
     try {
       // Get the recommendation data
-      String recommendJsonData = await apiService.getRecommend(query);
-      String relevantJsonData = await apiService.getRelevant(query);
+      String recommendJsonData = await apiService.getRecommend(query,query1,query2);
+      String relevantJsonData = await apiService.getRelevant(query,query1,query2);
 
       // Debugging: Print the cleaned response
       print("Recommendations API Response: $recommendJsonData");
@@ -82,6 +92,101 @@ class _SignUpState extends State<SignUp> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Invalid response format.")));
       }
+    }
+  }
+
+  Future<void> _onSearch1() async {
+    String query = recommended[0]['title'];
+    if (query.isEmpty) return;
+
+    try {
+      String jsonData = await apiService.getJobOpenings(query);
+      String skillJsonData = await apiService.getCommonSkills(query);
+      String companyJsonData = await apiService.getTopHiringCompanies(query);
+      String salaryJsonData = await apiService.getSalary(query);
+
+      // Debugging: Print raw API responses
+      print("Raw Job Openings API Response: ${jsonData.runtimeType} -> $jsonData");
+      print("Raw Skills API Response: ${skillJsonData.runtimeType} -> $skillJsonData");
+      print("Raw Companies API Response: ${companyJsonData.runtimeType} -> $companyJsonData");
+      print("Raw Salary API Response: ${salaryJsonData.runtimeType} -> $salaryJsonData");
+
+      // Ensure API response is a valid JSON string
+      String cleanJson(String response) {
+        return response.replaceAll(RegExp(r'```json|```'), '').trim();
+      }
+
+      // Validate if the response is JSON or contains unexpected formatting
+      dynamic parseJson(String response) {
+        response = cleanJson(response);
+        if (!response.startsWith('{') && !response.startsWith('[')) {
+          throw FormatException("Unexpected response format: Not valid JSON");
+        }
+        return jsonDecode(response);
+      }
+
+      Map<String, dynamic> jobData = parseJson(jsonData);
+      Map<String, dynamic> skillData = parseJson(skillJsonData);
+      Map<String, dynamic> companyData = parseJson(companyJsonData);
+      Map<String, dynamic> salaryData = parseJson(salaryJsonData);
+
+      // Handle API error responses
+      if (jobData.containsKey('error')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch job data.")));
+        return;
+      }
+
+      if (!skillData.containsKey('skills') || skillData['skills'] is! List) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch skills.")));
+        return;
+      }
+
+      if (!companyData.containsKey('companies') || companyData['companies'] is! List) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch hiring companies.")));
+        return;
+      }
+
+      if (!salaryData.containsKey('salary')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to fetch salary.")));
+        return;
+      }
+
+      // Update state with validated data
+      setState(() {
+        jobOpenings = [
+          jobData['2020'] ?? 0,
+          jobData['2021'] ?? 0,
+          jobData['2022'] ?? 0,
+          jobData['2023'] ?? 0,
+          jobData['2024'] ?? 0,
+        ];
+
+        skills = List<String>.from(skillData['skills']);
+
+        companies = List<String>.from(companyData['companies']);
+        salary = salaryData['salary'];
+      });
+
+      Provider.of<RecommendationProvider>(context, listen: false)
+          .updateJobOpenings(jobOpenings);
+
+      Provider.of<RecommendationProvider>(context, listen: false)
+          .updateSkills(skills);
+
+      Provider.of<RecommendationProvider>(context, listen: false)
+          .updateCompanies(companies);
+
+      Provider.of<RecommendationProvider>(context, listen: false)
+          .updateSalary(salary);
+
+    } catch (e) {
+      print("JSON Decode Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid response format.")));
     }
   }
 
@@ -373,7 +478,6 @@ class _SignUpState extends State<SignUp> {
                                     borderRadius: BorderRadius.circular(8),
                                   )
                               ),
-                              onSubmitted: (_)=>_onSearch(),
                             ),
                           ),
                         ],
@@ -495,11 +599,12 @@ class _SignUpState extends State<SignUp> {
                           SizedBox(
                             width:900,
                             child: TextField(
+                              controller: _jobRoleController,
                               decoration: InputDecoration(
                                   labelStyle: TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
-                                  labelText: "Industry of Work Experience",
+                                  labelText: "Job Role",
                                   focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
@@ -581,6 +686,7 @@ class _SignUpState extends State<SignUp> {
                           SizedBox(
                             width:600,
                             child: TextField(
+                              controller: _hardSkillController,
                               decoration: InputDecoration(
                                   labelStyle: TextStyle(
                                       color: Color(0xFFF2994A)
@@ -837,9 +943,28 @@ class _SignUpState extends State<SignUp> {
                   height:40,
                 ),
                 GestureDetector(
-                  onTap: (){
-                    context.go('/home');
-                  },
+                  onTap: ()
+                    async{
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) =>
+                              Center(
+                                child: CircularProgressIndicator(),
+                              )
+                      );
+
+                      try{
+                         await _onSearch();
+                         await _onSearch1();
+                         context.go('/home');
+                      }
+                      finally{
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                      }
+                    },
                   child: Container(
                     margin: EdgeInsetsDirectional.only(start: 100,end:100),
                     padding: EdgeInsets.symmetric(vertical: 4,horizontal: 110),

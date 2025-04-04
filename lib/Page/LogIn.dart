@@ -1,11 +1,29 @@
 import 'package:careeradvisor_kitahack2025/Component/NavBarLogIn.dart';
+import 'package:careeradvisor_kitahack2025/Services/firebase_auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../Services/AIServices.dart';
 
 
-class Login extends StatelessWidget implements PreferredSizeWidget {
+class Login extends StatefulWidget implements PreferredSizeWidget {
+  @override
+  State<Login> createState() => _LoginState();
+
+  @override
+  // TODO: implement preferredSize
+  Size get preferredSize => throw UnimplementedError();
+}
+
+class _LoginState extends State<Login> {
+  final FirebaseAuthService _auth = FirebaseAuthService();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true;
+
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NavBarLogIn(),
@@ -49,6 +67,7 @@ class Login extends StatelessWidget implements PreferredSizeWidget {
                         SizedBox(
                           width:600,
                           child: TextField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                               labelStyle: TextStyle(
                                 color: Color(0xFFF2994A)
@@ -76,6 +95,8 @@ class Login extends StatelessWidget implements PreferredSizeWidget {
                         SizedBox(
                           width:600,
                           child: TextField(
+                            controller: _passwordController,
+                            obscureText: _obscureText,
                             decoration: InputDecoration(
                                 labelStyle: TextStyle(
                                     color: Color(0xFFF2994A)
@@ -93,7 +114,16 @@ class Login extends StatelessWidget implements PreferredSizeWidget {
                                 ),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8)
-                                )
+                                ),
+                                suffixIcon: IconButton(
+                                    onPressed: (){
+                                      setState(() {
+                                        _obscureText =!_obscureText;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                                    ))
                             ),
                           ),
                         ),
@@ -101,9 +131,7 @@ class Login extends StatelessWidget implements PreferredSizeWidget {
                           height: 60,
                         ),
                         GestureDetector(
-                          onTap: (){
-                            context.go('/home');
-                          },
+                          onTap: _signIn,
                           child: Container(
                             margin: EdgeInsetsDirectional.only(start: 100,end:100),
                             padding: EdgeInsets.symmetric(vertical: 4,horizontal: 130),
@@ -173,6 +201,25 @@ class Login extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
+  void _signIn() async{
+    String email = _emailController.text;
+    String password=_passwordController.text;
+
+    User ? user = await _auth.signInWithEmailAndPassword(email, password);
+
+    if (user != null){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("User is successfully signed in")
+          ));
+      print("User is successfully signed in");
+      context.go('/home');
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Some error happend")
+          ));
+      print('Some error happend');
+    }
+  }
+
   @override
-  Size get preferredSize => Size.fromHeight(60); // Adjust height if needed
-}
+  Size get preferredSize => Size.fromHeight(60); }
