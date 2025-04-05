@@ -62,7 +62,7 @@ class CheckerResults extends StatelessWidget {
     final Map<String, String> parsedResponse = _parseAIResponse(aiResponse);
 
     return Scaffold(
-      appBar: TopNavBar(),
+      appBar: TopNavBar(page: 'checker',),
       backgroundColor: const Color(0xFFFFF5EC),
       body: SingleChildScrollView(
         child: Column(

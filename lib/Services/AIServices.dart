@@ -6,7 +6,7 @@ class AIService {
 
   AIService() {
     model = GenerativeModel(
-        model: 'gemini-1.5-pro',
+        model: 'gemini-2.0-flash',
         apiKey: 'AIzaSyAod3bstAG3bzu5jjOjHuJHcyuUBNvjPFU');
   }
 
@@ -22,72 +22,80 @@ class AIService {
   Future<String> compareResumeAndJobDescription(
       String resumeText, String jobDescription) async {
     final prompt = """
-  Compare the following resume text with the job description and provide feedback:
-  
-  **Resume Text:**
-  $resumeText
-  
-  **Job Description:**
-  $jobDescription
-  
-  Tasks:
-  1. Rate the resume's relevance to the job description on a scale of 0-100.
-  2. Identify missing keywords or skills in the resume compared to the job description.
-  3. Suggest improvements to the resume to better match the job description.
-  4. Provide a revised version of the resume based on the following template:
-  
-  **Resume Template:**
-  Name: [Your Name]
-  Job Apply: [Job Title]
-  Email: [Your Email]
-  Phone Number: [Your Phone Number]
-  LinkedIn: [Your LinkedIn Profile]
-  Portfolio: [Your Portfolio/Website]
-  Address: [Your Address]
+Compare the following resume with the job description and provide analysis and improvements, ensuring the final version is optimized for Applicant Tracking Systems (ATS).
 
-  Education:
-  - [Degree], [University], [Graduation Year]
+**Resume Text:**
+$resumeText
 
-  Certifications:
-  - [Certification Name], [Year]
-  - [Certification Name], [Year]
+**Job Description:**
+$jobDescription
 
-  Professional Summary:
-  - A highly motivated [Job Title] with [X years] of experience in [Field]. Skilled in [Key Skill 1], [Key Skill 2], and [Key Skill 3]. Proven track record of [Quantifiable Achievement].
+**Tasks:**
+1. Rate the resume's relevance to the job description on a scale of 0-100.
+2. Identify missing keywords or skills that are present in the job description but not in the resume.
+3. Suggest specific improvements to align the resume more closely with the job description and current market trends in this field.
+4. Provide an **ATS-optimized** revised version of the resume using the template below.
 
-  Technical Skills:
-  - [Skill 1], [Skill 2], [Skill 3], [Skill 4]
+**ATS Formatting Guidelines:**
+- Use standard headings like Education, Experience, Skills, Projects, etc.
+- Avoid tables, columns, graphics, images, or unusual fonts.
+- Use bullet points and simple formatting.
+- Ensure compatibility with resume screening systems.
+- Match terminology and keywords from the job description.
+- Use consistent structure and clear, quantifiable achievements.
 
-  Experience:
-  - [Job Title] at [Company], [Start Date] - [End Date]
-    - [Action Verb] [Task/Responsibility] to achieve [Quantifiable Result].
-    - [Action Verb] [Task/Responsibility] to improve [Outcome].
+**ATS-Optimized Resume Template:**
+Name: [Your Name]  
+Job Title Applied For: [Job Title]  
+Email: [Your Email]  
+Phone: [Your Phone Number]  
+LinkedIn: [LinkedIn URL]  
+Portfolio: [Portfolio URL]  
+Location: [City, Country]  
 
-  Projects:
-  - [Project Name] ([Technologies Used])
-    - [Brief description of the project, your role, and outcomes].
+**Professional Summary:**  
+- [1-2 sentences summarizing your career background, strengths, and goals.]
 
-  Achievements:
-  - [Achievement 1]
-  - [Achievement 2]
+**Education:**  
+- [Degree], [Institution], [Graduation Year]  
 
-  Languages:
-  - [Language 1] (Proficiency Level)
-  - [Language 2] (Proficiency Level)
+**Certifications:**  
+- [Certification Name], [Year]  
 
-  References:
-  - Available upon request.
-  
-  Format your response as follows:
-  Matching Score: [Score]%
-  Missing Keywords:\n[Keywords]
-  Suggestions:\n[Suggestions]
-  Revised Resume:\n[Revised Resume]
-  """;
+**Skills:**  
+- [Skill 1], [Skill 2], [Skill 3], [Skill 4], [Skill 5]  
+
+**Experience:**  
+- [Job Title], [Company Name], [Start Date] – [End Date]  
+  - [Action verb] [Responsibility or task] resulting in [Outcome].  
+  - [Action verb] [Responsibility or task] with focus on [Result/Impact].  
+
+**Projects:**  
+- [Project Title] – [Technologies Used]  
+  - [Brief project description, your role, and outcomes.]
+
+**Achievements:**  
+- [Achievement 1]  
+- [Achievement 2]  
+
+**Languages:**  
+- [Language 1] (Proficiency)  
+- [Language 2] (Proficiency)  
+
+**References:**  
+Available upon request.
+
+**Response Format:**
+Matching Score: [Score]%  
+Missing Keywords:\n[Keywords]  
+Suggestions:\n[Suggestions]  
+Revised Resume:\n[Revised Resume]
+""";
 
     final response = await model.generateContent([Content.text(prompt)]);
     return response.text ?? "Error comparing resume and job description.";
   }
+
 
   Future<String> generateInterviewQuestionsWithHints(
       String jobTitle, String companyName, String jobDesc, String responsibilities) async {
@@ -222,42 +230,42 @@ class AIService {
     return response.text ?? '{"salary": "Unknown"}';
   }
 
-  Future<String> getRecommend(String fieldStudy) async {
+  Future<String> getRecommend(String fieldStudy,String jobRole,String hardSkill) async {
     final prompt = """
-      Given the field of study "$fieldStudy", provide job recommendations in Malaysia.
+       Given the field of study "$fieldStudy", job role "$jobRole", and hard skills "$hardSkill", provide job recommendations in Malaysia.
     The response should be in JSON format like:
     {
       "recommendations": [
         {
           "title": "Software Engineer",
           "salary": "RM 3000 - RM 3500",
-          "skills": "Java, Python, C++, MongoDB, Node.js, AWS...",
+          "skills": "Java, Python, C++",
           "match": "85% Match | Interest · Skills · Education"
         }
       ]
     }
-    Do NOT include any extra text, explanation, or comments.Only provide 3 jobs and three most important skills.
+    Only provide 3 jobs and the three most important skills.The word of title just 3.
   """;
 
     final response = await model.generateContent([Content.text(prompt)]);
     return response.text ?? '{"recommendations": []}';
   }
 
-  Future<String> getRelevant(String fieldStudy) async {
+  Future<String> getRelevant(String fieldStudy,String jobRole,String hardSkill) async {
     final prompt = """
-      Given the field of study "$fieldStudy", provide job relevant in Malaysia.
+      Given the field of study "$fieldStudy", job role "$jobRole", and hard skills "$hardSkill", provide job relevancy in Malaysia.
     The response should be in JSON format like:
     {
       "relevant": [
         {
           "title": "Software Engineer",
           "salary": "RM 3000 - RM 3500",
-          "skills": "Java, Python, C++, MongoDB, Node.js, AWS...",
+          "skills": "Java, Python, C++",
           "match": "85% Match | Interest · Skills · Education"
         }
       ]
     }
-    Do NOT include any extra text, explanation, or comments.Only provide 3 jobs and three most important skills.
+    Only provide 3 jobs and the three most important skills.The word of title just 3.
   """;
 
     final response = await model.generateContent([Content.text(prompt)]);

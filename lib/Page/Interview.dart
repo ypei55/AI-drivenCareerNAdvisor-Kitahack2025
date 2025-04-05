@@ -71,7 +71,7 @@ class Interview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopNavBar(),
+      appBar: TopNavBar(page: 'interview',),
       backgroundColor: const Color(0xFFFFF5EC),
       body: SingleChildScrollView(
         child: Padding(

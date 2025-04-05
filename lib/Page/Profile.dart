@@ -14,14 +14,35 @@ class _ProfileState extends State<Profile> {
   bool isEditingInterest = false;
   bool isEditingEducation = false;
 
-  TextEditingController experienceController = TextEditingController(text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.");
-  TextEditingController interestController = TextEditingController(text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.");
+  TextEditingController experienceController = TextEditingController(text: "Internship as Frontend Developer");
+  TextEditingController interestController = TextEditingController(text: "Editing video and vlog");
   TextEditingController educationController = TextEditingController(text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.");
+
+  final List<Map<String, dynamic>> lessons = [
+    {
+      "title": "Data Structures and Algorithms",
+      "imageUrl": "assets/course1.png",
+      "chapters": 10,
+      "hours": 6,
+    },
+    {
+      "title": "Introduction to Machine Learning",
+      "imageUrl": "assets/course3.jpg",
+      "chapters": 12,
+      "hours": 8,
+    },
+    {
+      "title": "Mobile App Development",
+      "imageUrl": "assets/course7.jpg",
+      "chapters": 15,
+      "hours": 10,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopNavBar(),
+      appBar: TopNavBar(page: 'profile'),
       backgroundColor: Color(0xFFFFF5EC),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
@@ -112,14 +133,14 @@ class _ProfileState extends State<Profile> {
                               ),
                               SizedBox(height: 10),
                               EducationItem(
-                                logo: 'profile.png', // Replace with University of Edinburgh logo
+                                logo: 'school1.png', // Replace with University of Edinburgh logo
                                 university: "University of Edinburgh",
                                 duration: "2022–2024",
                                 degree: "Master of Science in Artificial Intelligence",
                               ),
                               SizedBox(height: 10),
                               EducationItem(
-                                logo: 'profile.png', // Replace with UPM logo
+                                logo: 'school2.png', // Replace with UPM logo
                                 university: "Universiti Putra Malaysia",
                                 duration: "2018–2022",
                                 degree: "Bachelor of Science in Software Engineering",
@@ -172,23 +193,25 @@ class _ProfileState extends State<Profile> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              LessonCard(
-                                title: "Data Structures and Algorithms",
-                                imageUrl: "assets/job1.jpg",
-                                chapters: 10,
-                                hours: 6,
-                              ),
-                              LessonCard(
-                                title: "Data Structures and Algorithms",
-                                imageUrl: "assets/job1.jpg",
-                                chapters: 10,
-                                hours: 6,
-                              ),
-                              LessonCard(
-                                title: "Data Structures and Algorithms",
-                                imageUrl: "assets/job1.jpg",
-                                chapters: 10,
-                                hours: 6,
+                              Container(
+                                width: 875,
+                                height: 220,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal, // Horizontal list
+                                  itemCount: lessons.length,
+                                  itemBuilder: (context, index) {
+                                    final lesson = lessons[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: LessonCard(
+                                        title: lesson['title'],
+                                        imageUrl: lesson['imageUrl'],
+                                        chapters: lesson['chapters'],
+                                        hours: lesson['hours'],
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                               Container(
                                 width: 40,

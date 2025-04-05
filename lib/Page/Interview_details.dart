@@ -67,7 +67,7 @@ class Interview_details extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: TopNavBar(),
+      appBar: TopNavBar(page: 'interview',),
       backgroundColor: const Color(0xFFFFF5EC),
       body: 
         Padding(

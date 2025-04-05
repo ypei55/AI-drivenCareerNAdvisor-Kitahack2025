@@ -91,7 +91,7 @@ class _CheckerState extends State<Checker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopNavBar(),
+      appBar: TopNavBar(page: 'checker',),
       backgroundColor: Color(0xFFFFF5EC),
       body: SingleChildScrollView(
         child: Padding(

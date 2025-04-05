@@ -4,6 +4,7 @@ import 'package:careeradvisor_kitahack2025/Page/Interview_details.dart';
 import 'package:careeradvisor_kitahack2025/Page/LiveInterviewScreen.dart';
 import 'package:careeradvisor_kitahack2025/Page/LogIn.dart';
 import 'package:careeradvisor_kitahack2025/Page/SignUp.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,14 @@ import 'Services/Provider.dart';
 
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+        apiKey: "AIzaSyCvA8Pr4zEmYj-_C1yAvBn5ErdikdGETuo",
+        projectId: "ai-drivencareernadvisor",
+        messagingSenderId: "590026782937",
+        appId: "1:590026782937:web:bd46249dffdc1952cce6c8",
+    ));
   runApp(
       ChangeNotifierProvider(
           create: (context)=>RecommendationProvider(),

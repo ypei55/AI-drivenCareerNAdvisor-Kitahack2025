@@ -31,6 +31,33 @@
 
   <title>careeradvisor_kitahack2025</title>
   <link rel="manifest" href="manifest.json">
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+    // TODO: Add SDKs for Firebase products that you want to use
+     // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCvA8Pr4zEmYj-_C1yAvBn5ErdikdGETuo",
+  authDomain: "ai-drivencareernadvisor.firebaseapp.com",
+  projectId: "ai-drivencareernadvisor",
+  storageBucket: "ai-drivencareernadvisor.firebasestorage.app",
+  messagingSenderId: "590026782937",
+  appId: "1:590026782937:web:bd46249dffdc1952cce6c8",
+  measurementId: "G-V59D9DEB7H"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+  </script>
+
+
+
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
