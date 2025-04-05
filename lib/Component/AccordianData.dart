@@ -1,17 +1,11 @@
 class AccordionItemData {
   final String title;
   final String score;
-  final String typeOfInterview;
-  final String levelOfInterview;
-  final int numberOfQuestions;
   final List<QuestionAnswerScore> questionAnswerScores;
 
   AccordionItemData({
     required this.title,
     required this.score,
-    this.typeOfInterview = '',
-    this.levelOfInterview = '',
-    this.numberOfQuestions = 0,
     this.questionAnswerScores = const [],
   });
 }

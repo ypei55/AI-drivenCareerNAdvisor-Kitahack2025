@@ -132,23 +132,25 @@ class AIService {
        - Technical Skills Rating (1-10)
        - Communication Skills Rating (1-10)
        - Overall Score (1-10)
-    
-    Format your response as follows:
-    
-    **Interview Evaluations:**
-    
-    1. Question: [Question]
-       Interviewee Response: [Response]
-       Feedback: [Feedback]
-       Score: [Score]
-    
-    (Repeat for all responses)
-    
-    Final Interview Report:
-    - Technical Skills Rating: [Score]/10
-    - Communication Skills Rating: [Score]/10
-    - Overall Score: [Score]/10
-    """;
+       
+    Format your response as a JSON object with the following structure:
+    {
+    "interviewEvaluations": [
+    {
+      "question": "[Question]",
+      "intervieweeResponse": "[Response]",
+      "feedback": "[Feedback]",
+      "score": "[Score]/10"
+    },
+    // ... more evaluations
+  ],
+    "finalInterviewReport": {
+      "technicalSkillsRating": "[Score]/10",
+      "communicationSkillsRating": "[Score]/10",
+      "overallhrIVScore": "[Score]/10"
+    }
+  }
+  """;
 
     final response = await model.generateContent([Content.text(prompt)]);
     print(response);

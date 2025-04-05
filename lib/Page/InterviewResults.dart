@@ -3,11 +3,12 @@ import 'dart:html' as html;
 import 'dart:ui' as ui;
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert'; // Import for JSON decoding
 
 import '../Component/AccordianData.dart';
 import '../Component/AccordianWidget.dart';
 
-class InterviewResult extends StatelessWidget {
+class InterviewResult extends StatefulWidget {
   final String videoUrl;
   final String jobTitle;
   final String result;
@@ -19,14 +20,77 @@ class InterviewResult extends StatelessWidget {
   InterviewResult({super.key, required this.videoUrl, required this.jobTitle, required this.result});
 
   @override
+  _InterviewResultState createState() => _InterviewResultState();
+}
+
+class _InterviewResultState extends State<InterviewResult> {
+  Map<String, dynamic> extractedData = {};
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
+  Map<String, dynamic> _extractData(String result) {
+    try {
+      String cleanedResult = result;
+      if (result.startsWith('```json') && result.endsWith('```')) {
+        cleanedResult = result.substring(7, result.length - 3).trim();
+      }
+
+      final decodedJson = jsonDecode(cleanedResult);
+      List<Map<String, dynamic>> questions = [];
+      if (decodedJson.containsKey('interviewEvaluations') && decodedJson['interviewEvaluations'] is List) {
+        questions = (decodedJson['interviewEvaluations'] as List<dynamic>).map((eval) {
+          if (eval is Map<String, dynamic>) {
+            final scoreParts = (eval['score'] as String?)?.split('/');
+            return {
+              'question': eval['question'] ?? '',
+              'answer': eval['intervieweeResponse'] ?? '',
+              'feedback': eval['feedback'] ?? '',
+              'score': scoreParts != null && scoreParts.length == 2 ? int.tryParse(scoreParts[0]) ?? 0 : 0,
+            };
+          } else {
+            // Handle the case where an element is not a Map<String, dynamic>
+            print('Warning: Unexpected type in interviewEvaluations: $eval');
+            return <String, dynamic>{}; // Return an empty map or some other default
+          }
+        }).toList();
+      }
+
+      Map<String, dynamic> finalReport = decodedJson['finalInterviewReport'] ?? {};
+      final technicalSkillsParts = (finalReport['technicalSkillsRating'] as String?)?.split('/');
+      final communicationSkillsParts = (finalReport['communicationSkillsRating'] as String?)?.split('/');
+      final overallhrIVScoreParts = (finalReport['overallhrIVScore'] as String?)?.split('/');
+      return {
+        'interviewEvaluations': questions,
+        'technicalSkillsRating': technicalSkillsParts != null && technicalSkillsParts.length == 2 ? int.tryParse(technicalSkillsParts[0]) ?? 0 : 0,
+        'communicationSkillsRating': communicationSkillsParts != null && communicationSkillsParts.length == 2 ? int.tryParse(communicationSkillsParts[0]) ?? 0 : 0,
+        'overallhrIVScore': overallhrIVScoreParts != null && overallhrIVScoreParts.length == 2 ? int.tryParse(overallhrIVScoreParts[0]) ?? 0 : 0,
+      };
+    } catch (e) {
+      print('Error decoding JSON: $e');
+      print('Raw response: $result');
+      return {
+        'interviewEvaluations': [],
+        'technicalSkillsRating': 0,
+        'communicationSkillsRating': 0,
+        'overallhrIVScore': 0,
+      };
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Wrap(
+        title: Wrap(
           children: [
-            const Text('Summary of Practice Mock Interview for ',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800),),
-            Text(jobTitle, style: const TextStyle(color: Color(0xFFFF6B00),fontWeight: FontWeight.w800),),
-          ],)
+            const Text('Summary of Practice Mock Interview for ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w800)),
+            Text(widget.jobTitle, style: const TextStyle(color: Color(0xFFFF6B00), fontWeight: FontWeight.w800)),
+          ],
+        ),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -37,20 +101,26 @@ class InterviewResult extends StatelessWidget {
             children: [
               const ProfileSection(),
               const SizedBox(height: 20),
-              ScoreOverview(result:result,score:score),
-              const SizedBox(height: 20),
-              const Divider(height: 10,thickness: 1),
-              const SizedBox(height: 20),
-              RecordedSession(videoUrl),
-              const SizedBox(height: 25),
-              ScoreDetails(result: result,score:score),
-            ],
+              ScoreOverview(
+                technicalSkills: extractedData['technicalSkillsRating'] as int,
+                communicationSkills: extractedData['communicationSkillsRating'] as int,
+                overallhrIVScore: extractedData['overallhrIVScore'] as int,
+                score: widget.score,
+                ),
+                const SizedBox(height: 20),
+                const Divider(height: 10, thickness: 1),
+                const SizedBox(height: 20),
+                RecordedSession(widget.videoUrl),
+                const SizedBox(height: 25),
+                ScoreDetails(extractedEvaluations: extractedData['interviewEvaluations'] ?? [], overallhrIVScore: extractedData['overallhrIVScore'] as int, score: widget.score),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    );
-  }
-}
+        );
+      }
+    }
+
 
 
 class ProfileSection extends StatelessWidget {
@@ -80,21 +150,19 @@ class ProfileSection extends StatelessWidget {
 }
 
 class ScoreOverview extends StatelessWidget {
-  final String result;
+  // final String result;
+  final int technicalSkills;
+  final int communicationSkills;
+  final int overallhrIVScore;
   final Map<String,int>score;
 
-  const ScoreOverview({super.key, required this.result, required this.score});
+  const ScoreOverview({super.key, required this.technicalSkills, required this.communicationSkills, required this.overallhrIVScore, required this.score});
   @override
   Widget build(BuildContext context) {
-    final technicalSkills = int.tryParse(RegExp(r'Technical Skills Rating: (\d+)/10').firstMatch(result)?.group(1) ?? '0') ?? 0;
-    final communicationSkills = int.tryParse(RegExp(r'Communication Skills Rating: (\d+)/10').firstMatch(result)?.group(1) ?? '0') ?? 0;
-    final hrIVScore = int.tryParse(RegExp(r'Overall Score: (\d+)/10').firstMatch(result)?.group(1) ?? '0') ?? 0;
-    final hrIVOverallScore = (hrIVScore / 10 * 100).toInt();
-
     final mcq = score['mcq'] ?? 0;
     final tech = score['technical'] ?? 0;
 
-    double overallScore = (mcq + hrIVOverallScore + tech) / 300;
+    double overallScore = (mcq + overallhrIVScore * 10 + tech) / 300;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,7 +171,7 @@ class ScoreOverview extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('MCQ Test - $mcq%'),
-            Text('HR Interview - $hrIVOverallScore%'),
+            Text('HR Interview - ${overallhrIVScore * 10}%'),
             Text('Technical Interview - $tech%'),
           ],
         ),
@@ -111,14 +179,14 @@ class ScoreOverview extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Technical Skills - ${(technicalSkills / 10 * 100).toInt()}%'),
-            Text('Communication - ${(communicationSkills / 10 * 100).toInt()}%'),
+            Text('Technical Skills - ${technicalSkills * 10}%'),
+            Text('Communication - ${communicationSkills * 10}%'),
           ],
         ),
         CircularPercentIndicator(
           radius: 50.0,
           lineWidth: 8.0,
-          percent: overallScore,
+          percent: overallScore.isNaN ? 0.0 : overallScore,
           center: Text('${(overallScore * 100).toStringAsFixed(2)}%',style: const TextStyle(fontSize: 20, color: Colors.green),),
           progressColor: Colors.green,
         ),
@@ -162,29 +230,20 @@ class RecordedSession extends StatelessWidget {
             ),
           ),
         ),
-        // Padding(
-        //   padding: const EdgeInsets.all(20.0),
-        //   child: ElevatedButton(
-        //       // Navigate back or to another page
-        //     onPressed: () {Navigator.pop(context);},
-        //     child: const Text('BACK TO INTERVIEW'),
-        //   ),
-        // ),
       ],
     );
   }
 }
 class ScoreDetails extends StatelessWidget {
+  final List<Map<String,dynamic>> extractedEvaluations;
+  final int overallhrIVScore;
   final Map<String, int> score;
-  String result;
+  // String result;
 
-  ScoreDetails({super.key, required this.result, required this.score});
+  ScoreDetails({super.key, required this.extractedEvaluations, required this.overallhrIVScore, required this.score});
 
   @override
   Widget build(BuildContext context) {
-    RegExp questionRegex = RegExp(r'Question: (.+?)\s*Interviewee Response: (.+?)\s*Feedback: (.+?)\s*Score: (\d+)/10');
-    Iterable<Match> questionMatches = questionRegex.allMatches(result);
-    final overallScore = int.tryParse(RegExp(r'Overall Score: (\d+)/10').firstMatch(result)?.group(1) ?? '0') ?? 0;
 
     List<AccordionItemData> accordionItems = [
       AccordionItemData(
@@ -193,19 +252,16 @@ class ScoreDetails extends StatelessWidget {
       ),
       AccordionItemData(
         title: 'HR interview report',
-        score: '${overallScore * 10}%',
-        typeOfInterview: 'AI based interview',
-        levelOfInterview: 'Medium',
-        numberOfQuestions: 5,
-        questionAnswerScores: 
-        questionMatches.map((match) {
-            return QuestionAnswerScore(
-              question: match.group(1) ?? '',
-              answer: match.group(2) ?? '',
-              feedback: match.group(3) ?? '',
-              score: int.parse(match.group(4) ?? '0'),
-            );
-          }).toList()),
+        score: '${overallhrIVScore * 10}%',
+        questionAnswerScores: extractedEvaluations.map((q) =>
+            QuestionAnswerScore(
+              question: q['question'] ?? 'N/A',
+              answer: q['answer'] ?? 'N/A',
+              feedback: q['feedback'] ?? 'N/A',
+              score: q['score'] ?? 0,
+            ),
+        ).toList(),
+      ),
       AccordionItemData(
         title: 'Technical interview report',
         score: '${score['technical']}%',
