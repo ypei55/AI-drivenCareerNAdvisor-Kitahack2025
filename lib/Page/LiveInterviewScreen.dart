@@ -145,7 +145,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       listenFor: Duration(seconds: 30),
     );
 
-    await Future.delayed(Duration(seconds: 30)); // Ensure full 30s wait
+    await Future.delayed(Duration(seconds: 10)); // Ensure full 30s wait
     await _speech.stop(); // Stop recording after 30 seconds
 
     return userAnswer; // Return the recorded answer
@@ -157,7 +157,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
     // await Permission.microphone.request();
     await _getAvailableCameras();
     _initRecording();
-    _speak('The interview session will start now, there are five questions and you have 1 minutes to answer each questions');
+    _speak('The interview session will start now, there are five questions and you have 1 minute to answer each questions');
     _startReadingQuestions();
     _initSpeech();
     if (_cameraActive) {
@@ -180,7 +180,11 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
 
   Future<void> _startCameraAndRecording() async {
     try {
-      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia({'video': {'cursor': 'always', 'displaySurface': 'monitor'}, 'audio': {'echoCancellation': true, 'noiseSuppression': true}});
+      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia(
+          {
+            'video': {'cursor': 'always', 'displaySurface': 'monitor'},
+            'audio': false
+          });
       if (_mediaStream != null) {
 
         _recordedVideo.srcObject = _mediaStream;
@@ -192,14 +196,14 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   }
 
   void _startRecording(html.MediaStream stream) {
-    try{    
+    try{
       // Ensure audio is enabled in MediaRecorder options
       final options = {
         'audioBitsPerSecond': 128000,
         'videoBitsPerSecond': 2500000,
         'mimeType': 'video/webm;codecs=vp9,opus' // Explicit codec specification
       };
-    
+
     _mediaRecorder = html.MediaRecorder(stream);
     _mediaRecorder!.start();
     setState(() => _isRecording = true);
@@ -374,7 +378,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                       ),
                     ),
                   ],
-                ) : Container()
+                ) : SizedBox()
               ),
             ),
             if (_isRecording)

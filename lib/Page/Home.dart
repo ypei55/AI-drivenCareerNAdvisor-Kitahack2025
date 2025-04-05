@@ -154,7 +154,7 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
-      appBar: TopNavBar(),
+      appBar: TopNavBar(page: 'home',),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(

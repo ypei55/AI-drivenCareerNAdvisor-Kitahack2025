@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
+  String page;
+  TopNavBar({required this.page});
+
   @override
   Widget build(BuildContext context) {
+    final isHome = page.toLowerCase() == "home";
+    final isChecker = page.toLowerCase() == "checker";
+    final isInterview = page.toLowerCase() == "interview";
+    final isCourses = page.toLowerCase() == "courses";
+
     return AppBar(
       backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
@@ -44,10 +52,10 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           Spacer(),
           // Navigation items
-          _buildNavItem('Home', context, '/home'),
-          _buildNavItem('Checker', context, '/checker'),
-          _buildNavItem('Mock Interview', context, '/interview'),
-          _buildNavItem('Courses', context, '/courses'),
+          _buildNavItem('Home', context, '/home', isHome),
+          _buildNavItem('Checker', context, '/checker', isChecker),
+          _buildNavItem('Mock Interview', context, '/interview', isInterview),
+          _buildNavItem('Courses', context, '/courses', isCourses),
 
 
 
@@ -147,7 +155,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   // Method to build nav items
-  Widget _buildNavItem(String title, BuildContext context, String path) {
+  Widget _buildNavItem(String title, BuildContext context, String path, bool isSelected) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: TextButton(
@@ -157,8 +165,9 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
         child: Text(
           title,
           style: TextStyle(
-            color: Colors.black,
+            color: isSelected ? Colors.orange : Colors.black,
             fontSize: 16,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.normal,
           ),
         ),
       ),
