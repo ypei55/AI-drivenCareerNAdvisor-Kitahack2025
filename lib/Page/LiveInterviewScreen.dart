@@ -96,7 +96,6 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
     for (int i = 0; i < interviewQuestions.length; i++) {
       String question = interviewQuestions[i];
 
-
       await _speak(question); // Wait until question is spoken completely
       print(question);
       setState(() {
@@ -142,10 +141,10 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
           userAnswer = result.recognizedWords;
         });
       },
-      listenFor: Duration(seconds: 30),
+      listenFor: Duration(seconds: 20),
     );
 
-    await Future.delayed(Duration(seconds: 10)); // Ensure full 30s wait
+    await Future.delayed(Duration(seconds: 20)); // Ensure full 30s wait
     await _speech.stop(); // Stop recording after 30 seconds
 
     return userAnswer; // Return the recorded answer
@@ -158,6 +157,9 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
     await _getAvailableCameras();
     _initRecording();
     _speak('The interview session will start now, there are five questions and you have 1 minute to answer each questions');
+    await flutterTts.awaitSpeakCompletion(true); // Ensures it waits until speaking is done
+    await _speak(''); // warm-up
+    await Future.delayed(const Duration(milliseconds: 200)); // slight buffer
     _startReadingQuestions();
     _initSpeech();
     if (_cameraActive) {
@@ -174,7 +176,6 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       ..height = html.window.innerHeight!
       ..controls = true;
 
-    // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory('recorded-video', (int_) => _recordedVideo);
   }
 
@@ -183,7 +184,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia(
           {
             'video': {'cursor': 'always', 'displaySurface': 'monitor'},
-            'audio': false
+            'audio': true
           });
       if (_mediaStream != null) {
 
@@ -201,26 +202,26 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       final options = {
         'audioBitsPerSecond': 128000,
         'videoBitsPerSecond': 2500000,
-        'mimeType': 'video/webm;codecs=vp9,opus' // Explicit codec specification
+        'mimeType': 'video/webm;codecs=vp9,opus' 
       };
 
-    _mediaRecorder = html.MediaRecorder(stream);
-    _mediaRecorder!.start();
-    setState(() => _isRecording = true);
+      _mediaRecorder = html.MediaRecorder(stream);
+      _mediaRecorder!.start();
+      setState(() => _isRecording = true);
 
-    _recordingBlob = html.Blob([]);
+      _recordingBlob = html.Blob([]);
 
-    _mediaRecorder!.addEventListener('dataavailable', (event) {
-      _recordingBlob = js.JsObject.fromBrowserObject(event)['data'];
-    }, true);
+      _mediaRecorder!.addEventListener('dataavailable', (event) {
+        _recordingBlob = js.JsObject.fromBrowserObject(event)['data'];
+      }, true);
 
-    _mediaRecorder!.addEventListener('stop', (event) {
-      final url = html.Url.createObjectUrl(_recordingBlob!);
-      setState(() => _recordedVideoUrl = url);
-    });
-  }catch(e){
-    print('Recording error: $e');
-  }
+      _mediaRecorder!.addEventListener('stop', (event) {
+        final url = html.Url.createObjectUrl(_recordingBlob!);
+        setState(() => _recordedVideoUrl = url);
+      });
+    }catch(e){
+      print('Recording error: $e');
+    }
   }
 
   Future<void> _stopRecording() async {
@@ -248,7 +249,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
     }
   }
 
-    Future<void> _requestPermissions() async {
+  Future<void> _requestPermissions() async {
     if (!_permissionsRequested) {
       _permissionsRequested = true;
       Map<Permission, PermissionStatus> statuses = await [
@@ -351,36 +352,36 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
               ),
             ),
             if (widget.showNotification)
-            Positioned(
-              top: 10,
-              left: 40,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: widget.isNormal ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.info_outlined,color: Colors.black),
-                    SizedBox(width: 5),
-                    Container(
-                      width: hint == '' ? 15 : 600,
-                      child: Padding(
-                        padding: EdgeInsets.all(3.0),
-                        child: Text(
-                          hint,
-                          maxLines: 5,
-                          softWrap: true,  // Allows text to wrap to the next line
-                          overflow: TextOverflow.visible,  // Ensures it remains visible
-                        ),
-                      ),
+              Positioned(
+                top: 10,
+                left: 40,
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ],
-                ) : SizedBox()
+                    child: widget.isNormal ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.info_outlined,color: Colors.black),
+                        SizedBox(width: 5),
+                        Container(
+                          width: hint == '' ? 15 : 600,
+                          child: Padding(
+                            padding: EdgeInsets.all(3.0),
+                            child: Text(
+                              hint,
+                              maxLines: 5,
+                              softWrap: true,  // Allows text to wrap to the next line
+                              overflow: TextOverflow.visible,  // Ensures it remains visible
+                            ),
+                          ),
+                        ),
+                      ],
+                    ) : SizedBox()
+                ),
               ),
-            ),
             if (_isRecording)
               Positioned(
                 top: 10,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
-import 'dart:ui' as ui;
+import 'dart:ui_web' as ui;
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert'; // Import for JSON decoding
@@ -200,16 +200,16 @@ class RecordedSession extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final videoWidth = screenWidth * 0.9;
+    final videoHeight = (videoWidth * 7) / 16;
     // Create a video element for playback
     final videoElement = html.VideoElement()
       ..src = videoUrl
       ..autoplay = false
       ..controls = true
-      ..width = (screenWidth * 0.7).toInt()
-      ..height = (screenHeight * 0.5).toInt();
+      ..style.width = '${videoWidth}px'
+      ..style.height = '${videoHeight}px';
 
-    // Register the view
-    // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory('result-video', (int _) => videoElement);
 
     return Column(
@@ -217,7 +217,7 @@ class RecordedSession extends StatelessWidget {
       children: [
         const Text('Recorded session', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Color(0xFFFF6B00))),
         const SizedBox(height: 15),
-        Container(
+        SizedBox(
           width: screenWidth * 0.9,
           height: screenHeight * 0.9,
           child: const Center(
@@ -236,7 +236,7 @@ class ScoreDetails extends StatelessWidget {
   final Map<String, int> score;
   // String result;
 
-  ScoreDetails({super.key, required this.extractedEvaluations, required this.overallhrIVScore, required this.score});
+  const ScoreDetails({super.key, required this.extractedEvaluations, required this.overallhrIVScore, required this.score});
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +254,7 @@ class ScoreDetails extends StatelessWidget {
           question: map['question']?.toString() ?? 'N/A',
           answer: map['intervieweeResponse']?.toString() ?? 'N/A',
           feedback: map['feedback']?.toString() ?? 'N/A',
-          score: q['score'] is int ? q['score'] as int : 0,
+          score: int.tryParse(map['score'].toString().split('/')[0]) ?? 0,
         );
       }).toList(),
       ),

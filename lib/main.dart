@@ -21,7 +21,7 @@ import 'Services/Provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: FirebaseOptions(
+    options: const FirebaseOptions(
         apiKey: "AIzaSyCvA8Pr4zEmYj-_C1yAvBn5ErdikdGETuo",
         projectId: "ai-drivencareernadvisor",
         messagingSenderId: "590026782937",
