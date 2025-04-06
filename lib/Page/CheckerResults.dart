@@ -54,6 +54,7 @@ class CheckerResults extends StatelessWidget {
       print('Error parsing AI response: $e');
     }
 
+    print(sections);
     return sections;
   }
 

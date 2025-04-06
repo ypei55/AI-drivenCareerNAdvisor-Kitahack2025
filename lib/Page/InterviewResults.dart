@@ -30,6 +30,7 @@ class _InterviewResultState extends State<InterviewResult> {
   @override
   void initState() {
     super.initState();
+    extractedData=_extractData(widget.result);
   }
 
 
@@ -43,21 +44,9 @@ class _InterviewResultState extends State<InterviewResult> {
       final decodedJson = jsonDecode(cleanedResult);
       List<Map<String, dynamic>> questions = [];
       if (decodedJson.containsKey('interviewEvaluations') && decodedJson['interviewEvaluations'] is List) {
-        questions = (decodedJson['interviewEvaluations'] as List<dynamic>).map((eval) {
-          if (eval is Map<String, dynamic>) {
-            final scoreParts = (eval['score'] as String?)?.split('/');
-            return {
-              'question': eval['question'] ?? '',
-              'answer': eval['intervieweeResponse'] ?? '',
-              'feedback': eval['feedback'] ?? '',
-              'score': scoreParts != null && scoreParts.length == 2 ? int.tryParse(scoreParts[0]) ?? 0 : 0,
-            };
-          } else {
-            // Handle the case where an element is not a Map<String, dynamic>
-            print('Warning: Unexpected type in interviewEvaluations: $eval');
-            return <String, dynamic>{}; // Return an empty map or some other default
-          }
-        }).toList();
+        // Safe cast from List<dynamic> to List<Map<String, dynamic>>
+        questions = (decodedJson['interviewEvaluations'] as List<dynamic>)
+            .cast<Map<String, dynamic>>();  // Cast directly to List<Map<String, dynamic>>
       }
 
       Map<String, dynamic> finalReport = decodedJson['finalInterviewReport'] ?? {};
@@ -66,9 +55,15 @@ class _InterviewResultState extends State<InterviewResult> {
       final overallhrIVScoreParts = (finalReport['overallhrIVScore'] as String?)?.split('/');
       return {
         'interviewEvaluations': questions,
-        'technicalSkillsRating': technicalSkillsParts != null && technicalSkillsParts.length == 2 ? int.tryParse(technicalSkillsParts[0]) ?? 0 : 0,
-        'communicationSkillsRating': communicationSkillsParts != null && communicationSkillsParts.length == 2 ? int.tryParse(communicationSkillsParts[0]) ?? 0 : 0,
-        'overallhrIVScore': overallhrIVScoreParts != null && overallhrIVScoreParts.length == 2 ? int.tryParse(overallhrIVScoreParts[0]) ?? 0 : 0,
+        'technicalSkillsRating': technicalSkillsParts != null && technicalSkillsParts.length == 2
+            ? int.tryParse(technicalSkillsParts[0]) ?? 0
+            : 0,
+        'communicationSkillsRating': communicationSkillsParts != null && communicationSkillsParts.length == 2
+            ? int.tryParse(communicationSkillsParts[0]) ?? 0
+            : 0,
+        'overallhrIVScore': overallhrIVScoreParts != null && overallhrIVScoreParts.length == 2
+            ? int.tryParse(overallhrIVScoreParts[0]) ?? 0
+            : 0,
       };
     } catch (e) {
       print('Error decoding JSON: $e');
@@ -81,6 +76,7 @@ class _InterviewResultState extends State<InterviewResult> {
       };
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,24 +98,24 @@ class _InterviewResultState extends State<InterviewResult> {
               const ProfileSection(),
               const SizedBox(height: 20),
               ScoreOverview(
-                technicalSkills: extractedData['technicalSkillsRating'] as int,
+                technicalSkills: extractedData['technicalSkillsRating'] as int ,
                 communicationSkills: extractedData['communicationSkillsRating'] as int,
                 overallhrIVScore: extractedData['overallhrIVScore'] as int,
                 score: widget.score,
-                ),
-                const SizedBox(height: 20),
-                const Divider(height: 10, thickness: 1),
-                const SizedBox(height: 20),
-                RecordedSession(widget.videoUrl),
-                const SizedBox(height: 25),
-                ScoreDetails(extractedEvaluations: extractedData['interviewEvaluations'] ?? [], overallhrIVScore: extractedData['overallhrIVScore'] as int, score: widget.score),
-                ],
               ),
-            ),
+              const SizedBox(height: 20),
+              const Divider(height: 10, thickness: 1),
+              const SizedBox(height: 20),
+              RecordedSession(widget.videoUrl),
+              const SizedBox(height: 25),
+              ScoreDetails(extractedEvaluations:(extractedData['interviewEvaluations'] as List<dynamic>).cast<Map<String, dynamic>>(), overallhrIVScore: extractedData['overallhrIVScore'] as int, score: widget.score),
+            ],
           ),
-        );
-      }
-    }
+        ),
+      ),
+    );
+  }
+}
 
 
 
@@ -252,15 +248,15 @@ class ScoreDetails extends StatelessWidget {
       ),
       AccordionItemData(
         title: 'HR interview report',
-        score: '${overallhrIVScore * 10}%',
-        questionAnswerScores: extractedEvaluations.map((q) =>
-            QuestionAnswerScore(
-              question: q['question'] ?? 'N/A',
-              answer: q['answer'] ?? 'N/A',
-              feedback: q['feedback'] ?? 'N/A',
-              score: q['score'] ?? 0,
-            ),
-        ).toList(),
+        score: '${overallhrIVScore * 10}%',questionAnswerScores: extractedEvaluations.map((q) {
+        final map = q as Map<String, dynamic>;
+        return QuestionAnswerScore(
+          question: map['question']?.toString() ?? 'N/A',
+          answer: map['intervieweeResponse']?.toString() ?? 'N/A',
+          feedback: map['feedback']?.toString() ?? 'N/A',
+          score: q['score'] is int ? q['score'] as int : 0,
+        );
+      }).toList(),
       ),
       AccordionItemData(
         title: 'Technical interview report',
