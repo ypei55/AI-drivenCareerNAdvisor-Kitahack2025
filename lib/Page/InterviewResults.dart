@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui;
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -12,12 +13,13 @@ class InterviewResult extends StatefulWidget {
   final String videoUrl;
   final String jobTitle;
   final String result;
-  final Map<String, int> score = {
-    'mcq': 85,
-    'technical': 70
-  };
+  final Map<String, int> score = {'mcq': 85, 'technical': 70};
 
-  InterviewResult({super.key, required this.videoUrl, required this.jobTitle, required this.result});
+  InterviewResult(
+      {super.key,
+      required this.videoUrl,
+      required this.jobTitle,
+      required this.result});
 
   @override
   _InterviewResultState createState() => _InterviewResultState();
@@ -30,9 +32,8 @@ class _InterviewResultState extends State<InterviewResult> {
   @override
   void initState() {
     super.initState();
-    extractedData=_extractData(widget.result);
+    extractedData = _extractData(widget.result);
   }
-
 
   Map<String, dynamic> _extractData(String result) {
     try {
@@ -43,27 +44,36 @@ class _InterviewResultState extends State<InterviewResult> {
 
       final decodedJson = jsonDecode(cleanedResult);
       List<Map<String, dynamic>> questions = [];
-      if (decodedJson.containsKey('interviewEvaluations') && decodedJson['interviewEvaluations'] is List) {
+      if (decodedJson.containsKey('interviewEvaluations') &&
+          decodedJson['interviewEvaluations'] is List) {
         // Safe cast from List<dynamic> to List<Map<String, dynamic>>
-        questions = (decodedJson['interviewEvaluations'] as List<dynamic>)
-            .cast<Map<String, dynamic>>();  // Cast directly to List<Map<String, dynamic>>
+        questions = (decodedJson['interviewEvaluations'] as List<dynamic>).cast<
+            Map<String,
+                dynamic>>(); // Cast directly to List<Map<String, dynamic>>
       }
 
-      Map<String, dynamic> finalReport = decodedJson['finalInterviewReport'] ?? {};
-      final technicalSkillsParts = (finalReport['technicalSkillsRating'] as String?)?.split('/');
-      final communicationSkillsParts = (finalReport['communicationSkillsRating'] as String?)?.split('/');
-      final overallhrIVScoreParts = (finalReport['overallhrIVScore'] as String?)?.split('/');
+      Map<String, dynamic> finalReport =
+          decodedJson['finalInterviewReport'] ?? {};
+      final technicalSkillsParts =
+          (finalReport['technicalSkillsRating'] as String?)?.split('/');
+      final communicationSkillsParts =
+          (finalReport['communicationSkillsRating'] as String?)?.split('/');
+      final overallhrIVScoreParts =
+          (finalReport['overallhrIVScore'] as String?)?.split('/');
       return {
         'interviewEvaluations': questions,
-        'technicalSkillsRating': technicalSkillsParts != null && technicalSkillsParts.length == 2
-            ? int.tryParse(technicalSkillsParts[0]) ?? 0
-            : 0,
-        'communicationSkillsRating': communicationSkillsParts != null && communicationSkillsParts.length == 2
+        'technicalSkillsRating':
+            technicalSkillsParts != null && technicalSkillsParts.length == 2
+                ? int.tryParse(technicalSkillsParts[0]) ?? 0
+                : 0,
+        'communicationSkillsRating': communicationSkillsParts != null &&
+                communicationSkillsParts.length == 2
             ? int.tryParse(communicationSkillsParts[0]) ?? 0
             : 0,
-        'overallhrIVScore': overallhrIVScoreParts != null && overallhrIVScoreParts.length == 2
-            ? int.tryParse(overallhrIVScoreParts[0]) ?? 0
-            : 0,
+        'overallhrIVScore':
+            overallhrIVScoreParts != null && overallhrIVScoreParts.length == 2
+                ? int.tryParse(overallhrIVScoreParts[0]) ?? 0
+                : 0,
       };
     } catch (e) {
       print('Error decoding JSON: $e');
@@ -83,8 +93,12 @@ class _InterviewResultState extends State<InterviewResult> {
       appBar: AppBar(
         title: Wrap(
           children: [
-            const Text('Summary of Practice Mock Interview for ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w800)),
-            Text(widget.jobTitle, style: const TextStyle(color: Color(0xFFFF6B00), fontWeight: FontWeight.w800)),
+            const Text('Summary of Practice Mock Interview for ',
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w800)),
+            Text(widget.jobTitle,
+                style: const TextStyle(
+                    color: Color(0xFFFF6B00), fontWeight: FontWeight.w800)),
           ],
         ),
       ),
@@ -98,8 +112,9 @@ class _InterviewResultState extends State<InterviewResult> {
               const ProfileSection(),
               const SizedBox(height: 20),
               ScoreOverview(
-                technicalSkills: extractedData['technicalSkillsRating'] as int ,
-                communicationSkills: extractedData['communicationSkillsRating'] as int,
+                technicalSkills: extractedData['technicalSkillsRating'] as int,
+                communicationSkills:
+                    extractedData['communicationSkillsRating'] as int,
                 overallhrIVScore: extractedData['overallhrIVScore'] as int,
                 score: widget.score,
               ),
@@ -108,7 +123,35 @@ class _InterviewResultState extends State<InterviewResult> {
               const SizedBox(height: 20),
               RecordedSession(widget.videoUrl),
               const SizedBox(height: 25),
-              ScoreDetails(extractedEvaluations:(extractedData['interviewEvaluations'] as List<dynamic>).cast<Map<String, dynamic>>(), overallhrIVScore: extractedData['overallhrIVScore'] as int, score: widget.score),
+              ScoreDetails(
+                  extractedEvaluations:
+                      (extractedData['interviewEvaluations'] as List<dynamic>)
+                          .cast<Map<String, dynamic>>(),
+                  overallhrIVScore: extractedData['overallhrIVScore'] as int,
+                  score: widget.score),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: 250,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () => context.go('/interview'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        "Completed",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -116,8 +159,6 @@ class _InterviewResultState extends State<InterviewResult> {
     );
   }
 }
-
-
 
 class ProfileSection extends StatelessWidget {
   const ProfileSection({super.key});
@@ -135,9 +176,22 @@ class ProfileSection extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Micheal Wong', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            Text(today, style: const TextStyle(fontSize: 17,color: Color(0xFFA4A4A4),fontWeight: FontWeight.w500),),
-            const Text('📍 Malaysia  |  ✉️ micheal_wong@gmail.com', style: TextStyle(fontSize: 15,color: Colors.grey,fontWeight: FontWeight.w500),),
+            const Text('Micheal Wong',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            Text(
+              today,
+              style: const TextStyle(
+                  fontSize: 17,
+                  color: Color(0xFFA4A4A4),
+                  fontWeight: FontWeight.w500),
+            ),
+            const Text(
+              '📍 Malaysia  |  ✉️ micheal_wong@gmail.com',
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ],
@@ -150,9 +204,14 @@ class ScoreOverview extends StatelessWidget {
   final int technicalSkills;
   final int communicationSkills;
   final int overallhrIVScore;
-  final Map<String,int>score;
+  final Map<String, int> score;
 
-  const ScoreOverview({super.key, required this.technicalSkills, required this.communicationSkills, required this.overallhrIVScore, required this.score});
+  const ScoreOverview(
+      {super.key,
+      required this.technicalSkills,
+      required this.communicationSkills,
+      required this.overallhrIVScore,
+      required this.score});
   @override
   Widget build(BuildContext context) {
     final mcq = score['mcq'] ?? 0;
@@ -171,7 +230,11 @@ class ScoreOverview extends StatelessWidget {
             Text('Technical Interview - $tech%'),
           ],
         ),
-        Container(width: 1.0,height: MediaQuery.of(context).size.height * 0.1, color: Colors.orange,margin: const EdgeInsets.symmetric(horizontal: 10.0)),
+        Container(
+            width: 1.0,
+            height: MediaQuery.of(context).size.height * 0.1,
+            color: Colors.orange,
+            margin: const EdgeInsets.symmetric(horizontal: 10.0)),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -183,7 +246,10 @@ class ScoreOverview extends StatelessWidget {
           radius: 50.0,
           lineWidth: 8.0,
           percent: overallScore.isNaN ? 0.0 : overallScore,
-          center: Text('${(overallScore * 100).toStringAsFixed(2)}%',style: const TextStyle(fontSize: 20, color: Colors.green),),
+          center: Text(
+            '${(overallScore * 100).toStringAsFixed(2)}%',
+            style: const TextStyle(fontSize: 20, color: Colors.green),
+          ),
           progressColor: Colors.green,
         ),
       ],
@@ -194,7 +260,6 @@ class ScoreOverview extends StatelessWidget {
 class RecordedSession extends StatelessWidget {
   final String videoUrl;
   const RecordedSession(this.videoUrl, {super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -210,12 +275,17 @@ class RecordedSession extends StatelessWidget {
       ..style.width = '${videoWidth}px'
       ..style.height = '${videoHeight}px';
 
-    ui.platformViewRegistry.registerViewFactory('result-video', (int _) => videoElement);
+    ui.platformViewRegistry
+        .registerViewFactory('result-video', (int _) => videoElement);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Recorded session', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Color(0xFFFF6B00))),
+        const Text('Recorded session',
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFF6B00))),
         const SizedBox(height: 15),
         SizedBox(
           width: screenWidth * 0.9,
@@ -230,17 +300,21 @@ class RecordedSession extends StatelessWidget {
     );
   }
 }
+
 class ScoreDetails extends StatelessWidget {
-  final List<Map<String,dynamic>> extractedEvaluations;
+  final List<Map<String, dynamic>> extractedEvaluations;
   final int overallhrIVScore;
   final Map<String, int> score;
   // String result;
 
-  const ScoreDetails({super.key, required this.extractedEvaluations, required this.overallhrIVScore, required this.score});
+  const ScoreDetails(
+      {super.key,
+      required this.extractedEvaluations,
+      required this.overallhrIVScore,
+      required this.score});
 
   @override
   Widget build(BuildContext context) {
-
     List<AccordionItemData> accordionItems = [
       AccordionItemData(
         title: 'MCQ test report',
@@ -248,15 +322,16 @@ class ScoreDetails extends StatelessWidget {
       ),
       AccordionItemData(
         title: 'HR interview report',
-        score: '${overallhrIVScore * 10}%',questionAnswerScores: extractedEvaluations.map((q) {
-        final map = q as Map<String, dynamic>;
-        return QuestionAnswerScore(
-          question: map['question']?.toString() ?? 'N/A',
-          answer: map['intervieweeResponse']?.toString() ?? 'N/A',
-          feedback: map['feedback']?.toString() ?? 'N/A',
-          score: int.tryParse(map['score'].toString().split('/')[0]) ?? 0,
-        );
-      }).toList(),
+        score: '${overallhrIVScore * 10}%',
+        questionAnswerScores: extractedEvaluations.map((q) {
+          final map = q as Map<String, dynamic>;
+          return QuestionAnswerScore(
+            question: map['question']?.toString() ?? 'N/A',
+            answer: map['intervieweeResponse']?.toString() ?? 'N/A',
+            feedback: map['feedback']?.toString() ?? 'N/A',
+            score: int.tryParse(map['score'].toString().split('/')[0]) ?? 0,
+          );
+        }).toList(),
       ),
       AccordionItemData(
         title: 'Technical interview report',
@@ -267,7 +342,8 @@ class ScoreDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Scores', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text('Scores',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 10),
         AccordionWidget(items: accordionItems)
       ],

@@ -4,43 +4,43 @@ import 'package:go_router/go_router.dart';
 import '../Component/TopNavBar.dart';
 
 class Interview_details extends StatelessWidget {
-    final Map<String, dynamic> interview;
+  final Map<String, dynamic> interview;
   const Interview_details({super.key, required this.interview});
 
   @override
   Widget build(BuildContext context) {
-  final Map<String, String> mcqTest = {
-    'assessmentName': 'react js',
-    'Aptitude' : '10',
-    'Technical' : '10',
-    'Total' : '40',
-    'Reasoning' : '10',
-    'CutOff' : '70%',
-    'Verbal' : '10'
-  };
-  final Map <String, String> techIV = {
-    'InterviewType' : 'AI-based Interview',
-    'InterviewLevel' : 'Medium',
-    'TotalQuestion' : '5' 
-  };
-  final Map <String, String> hrIV = {
-    'InterviewType' : 'Virtual Interview',
-    'InterviewLevel' : 'Not added',
-    'TotalQuestion' : 'Not added' 
-  };
-  final Map<String, String> jobInfo = {
-    'Salary': '35k-40k',
-    'Part / Full Time': 'Full Time',
-    'Experience': '2+ years',
-    'Work Mode': 'Hybrid',
-    'Location': 'Chennai',
-    'Openings': '5',
-  };
-  List<Map<String, dynamic>> jobHistory = [
+    final Map<String, String> mcqTest = {
+      'Assessment Name': 'react js',
+      'Aptitude': '10',
+      'Technical': '10',
+      'Total': '40',
+      'Reasoning': '10',
+      'CutOff': '70%',
+      'Verbal': '10'
+    };
+    final Map<String, String> techIV = {
+      'Interview Type': 'AI-based Interview',
+      'Interview Level': 'Medium',
+      'Total Question': '5'
+    };
+    final Map<String, String> hrIV = {
+      'Interview Type': 'Virtual Interview',
+      'Interview Level': 'Not added',
+      'Total Question': 'Not added'
+    };
+    final Map<String, String> jobInfo = {
+      'Salary': '35k-40k',
+      'Part / Full Time': 'Full Time',
+      'Experience': '2+ years',
+      'Work Mode': 'Hybrid',
+      'Location': 'Chennai',
+      'Openings': '5',
+    };
+    List<Map<String, dynamic>> jobHistory = [
       {
         'role': 'Software Engineer',
         'date': 'Dec 20, 2024',
-        'location' : 'Malaysia',
+        'location': 'Malaysia',
         'communication': '89%',
         'technical': '84%',
         'overall': '86%',
@@ -49,7 +49,7 @@ class Interview_details extends StatelessWidget {
       {
         'role': 'Software Engineer',
         'date': 'Jan 20, 2025',
-        'location' : 'Malaysia',
+        'location': 'Malaysia',
         'communication': '92%',
         'technical': '88%',
         'overall': '90%',
@@ -58,7 +58,7 @@ class Interview_details extends StatelessWidget {
       {
         'role': 'Software Engineer',
         'date': 'Feb 20, 2025',
-        'location' : 'Malaysia',
+        'location': 'Malaysia',
         'communication': '85%',
         'technical': '90%',
         'overall': '87%',
@@ -67,31 +67,42 @@ class Interview_details extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: TopNavBar(page: 'interview',),
+      appBar: TopNavBar(
+        page: 'interview',
+      ),
       backgroundColor: const Color(0xFFFFF5EC),
-      body: 
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
-          child:
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: jobHistory.length,
-                      itemBuilder: (context, index) {
-                    return JobCard(role: interview['role'],jobData: jobHistory[index]);
-              },
-            ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: JobDetails(jobTitle: interview['role'], companyName: interview['company'], logo:interview['logo'],jobDesc: interview['jobDesc'],responsibilities: interview['responsibilities'],requiredSkills: interview['requiredSkills'],jobInfo: jobInfo, mcqTest: mcqTest, techIV: techIV, hrIV: hrIV),
-                  ),
-                ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16.0),
+                itemCount: jobHistory.length,
+                itemBuilder: (context, index) {
+                  return JobCard(
+                      role: interview['role'], jobData: jobHistory[index]);
+                },
               ),
+            ),
+            Expanded(
+              flex: 2,
+              child: JobDetails(
+                  jobTitle: interview['role'],
+                  companyName: interview['company'],
+                  logo: interview['logo'],
+                  jobDesc: interview['jobDesc'],
+                  responsibilities: interview['responsibilities'],
+                  requiredSkills: interview['requiredSkills'],
+                  jobInfo: jobInfo,
+                  mcqTest: mcqTest,
+                  techIV: techIV,
+                  hrIV: hrIV),
+            ),
+          ],
         ),
+      ),
     );
   }
 }
@@ -121,18 +132,29 @@ class JobCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Role: ${role}',
-                    style:
-                        const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 2),
-                    Text(jobData['date'], style: const TextStyle(fontSize: 12,color: Color(0xFF717171)),),
+                    Text(
+                      jobData['date'],
+                      style: const TextStyle(
+                          fontSize: 12, color: Color(0xFF717171)),
+                    ),
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(Icons.place,color: Color(0xFFA4A4A4),size: 13.0),
-                        const SizedBox(width: 3.0), // Add some spacing between icon and text
+                        const Icon(Icons.place,
+                            color: Color(0xFFA4A4A4), size: 13.0),
+                        const SizedBox(
+                            width:
+                                3.0), // Add some spacing between icon and text
                         Text(
                           jobData['location'],
-                          style: const TextStyle(fontSize: 13.0,color: Color(0xFFA4A4A4),fontWeight: FontWeight.w500), // You can customize the text style
+                          style: const TextStyle(
+                              fontSize: 13.0,
+                              color: Color(0xFFA4A4A4),
+                              fontWeight: FontWeight
+                                  .w500), // You can customize the text style
                         ),
                       ],
                     ),
@@ -142,41 +164,78 @@ class JobCard extends StatelessWidget {
                       children: [
                         Column(
                           children: [
-                            Text(jobData['communication'], style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                            const Text('Communication',style: TextStyle(fontSize: 10,fontWeight: FontWeight.w100),)
+                            Text(
+                              jobData['communication'],
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const Text(
+                              'Communication',
+                              style: TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.w100),
+                            )
                           ],
                         ),
-                        const SizedBox(width: 15,),
+                        const SizedBox(
+                          width: 15,
+                        ),
                         Column(
                           children: [
-                            Text(jobData['technical'], style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                            const Text('Technical skills',style: TextStyle(fontSize: 10,fontWeight: FontWeight.w100),)
+                            Text(
+                              jobData['technical'],
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const Text(
+                              'Technical skills',
+                              style: TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.w100),
+                            )
                           ],
                         ),
-                        const SizedBox(width: 15,),
+                        const SizedBox(
+                          width: 15,
+                        ),
                         Column(
                           children: [
-                            Text(jobData['overall'], style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                            const Text('Overall all score',style: TextStyle(fontSize: 10,fontWeight: FontWeight.w100),)
+                            Text(
+                              jobData['overall'],
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const Text(
+                              'Overall all score',
+                              style: TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.w100),
+                            )
                           ],
                         ),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    TextButton(onPressed: () {}, child: 
-                    const Row(
-                      children: [
-                        Text('View More', style: TextStyle(fontSize: 13, color: Color(0xFFFF6B00)),),
-                        SizedBox(width: 5,),
-                        Icon(Icons.arrow_circle_right_outlined, size: 13,color: Color(0xFFFF6B00),),
-                      ],
-                    )),
-                    
+                    TextButton(
+                        onPressed: () {},
+                        child: const Row(
+                          children: [
+                            Text(
+                              'View More',
+                              style: TextStyle(
+                                  fontSize: 13, color: Color(0xFFFF6B00)),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(
+                              Icons.arrow_circle_right_outlined,
+                              size: 13,
+                              color: Color(0xFFFF6B00),
+                            ),
+                          ],
+                        )),
                   ],
                 ),
               ],
             ),
-
           ],
         ),
       ),
@@ -184,20 +243,30 @@ class JobCard extends StatelessWidget {
   }
 }
 
-
 class JobDetails extends StatelessWidget {
   final String jobTitle;
   final String companyName;
   final String logo;
   final String jobDesc;
   final String responsibilities;
-  final List <String> requiredSkills;
+  final List<String> requiredSkills;
   final Map<String, String> jobInfo;
   final Map<String, String> mcqTest;
   final Map<String, String> techIV;
   final Map<String, String> hrIV;
 
-  const JobDetails({super.key, required this.jobTitle, required this.companyName, required this.logo, required this.jobDesc, required this.responsibilities, required this.requiredSkills, required this.jobInfo, required this.mcqTest, required this.techIV, required this.hrIV});
+  const JobDetails(
+      {super.key,
+      required this.jobTitle,
+      required this.companyName,
+      required this.logo,
+      required this.jobDesc,
+      required this.responsibilities,
+      required this.requiredSkills,
+      required this.jobInfo,
+      required this.mcqTest,
+      required this.techIV,
+      required this.hrIV});
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +277,8 @@ class JobDetails extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: Colors.orange,width: 2,
+          color: Colors.orange,
+          width: 2,
         ),
       ),
       child: Padding(
@@ -217,11 +287,21 @@ class JobDetails extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Basic Job Details', style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold,color: Color(0xFFFF6B00))),
+              const Text('Basic Job Details',
+                  style: TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFFF6B00))),
               const SizedBox(height: 10),
-              Text(jobTitle,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.w900)),
+              Text(jobTitle,
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w900)),
               const SizedBox(height: 4),
-              Text('-- $companyName',style: const TextStyle(fontSize: 13,fontWeight: FontWeight.w300, color: Color(0xFF747474))),
+              Text('-- $companyName',
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w300,
+                      color: Color(0xFF747474))),
               Row(
                 children: [
                   Expanded(
@@ -229,49 +309,63 @@ class JobDetails extends StatelessWidget {
                     child: GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 10,
-                        ),
-                        itemCount: jobInfo.length,
-                        itemBuilder: (context, index) {
-                          final entry = jobInfo.entries.toList()[index];
-                          return Container(
-                            decoration: const BoxDecoration(
-                              border: Border(left: BorderSide(color: Color(0xFFFF6B00),width: 2.0),
-                              ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: RichText(text: TextSpan(
-                                  children: [
-                                    TextSpan(text: '${entry.key}: ',style: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Color(0xFF747474),
-                                    ),
-                                    ),
-                                    TextSpan(text: entry.value,style: const TextStyle(fontSize: 14,color: Color(0xFF747474),
+                      ),
+                      itemCount: jobInfo.length,
+                      itemBuilder: (context, index) {
+                        final entry = jobInfo.entries.toList()[index];
+                        return Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                  color: Color(0xFFFF6B00), width: 2.0),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: '${entry.key}: ',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF747474),
                                     ),
                                   ),
-                                 ],
-                                ),
-                               ),
+                                  TextSpan(
+                                    text: entry.value,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF747474),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                      ),
-
-                    Expanded(
-                      flex: 1, // Image takes 1/3 of space
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Container(
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1, // Image takes 1/3 of space
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Container(
                           constraints: BoxConstraints(
                             maxHeight: 100,
                             maxWidth: 100,
                           ),
-                          child: Image.asset(logo, fit: BoxFit.contain)), // Replace with your image path
-                      ),
+                          child: Image.asset(logo,
+                              fit: BoxFit
+                                  .contain)), // Replace with your image path
                     ),
+                  ),
                 ],
               ),
               const Padding(
@@ -280,20 +374,30 @@ class JobDetails extends StatelessWidget {
                   color: Colors.grey,
                   thickness: 1.0,
                 ),
-              ),              
-              const Text('Job Description : ',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),),
+              ),
+              const Text(
+                'Job Description : ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+              ),
               const SizedBox(height: 4),
               Text(jobDesc),
               const SizedBox(height: 10),
-              const Text('Responsibilities : ',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),),
+              const Text(
+                'Responsibilities : ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+              ),
               const SizedBox(height: 4),
               Text(responsibilities),
               const SizedBox(height: 10),
-              const Text('Required Skills : ',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),),
+              const Text(
+                'Required Skills : ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+              ),
               const SizedBox(height: 4),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: requiredSkills.map((skill)=>Text('- $skill')).toList(),
+                children:
+                    requiredSkills.map((skill) => Text('- $skill')).toList(),
               ),
               const Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
@@ -301,8 +405,12 @@ class JobDetails extends StatelessWidget {
                   color: Color(0xFFFF6B00),
                   thickness: 2.0,
                 ),
-              ),    
-              const Text('MCQ Test', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500,color: Color(0xFFFF6B00))),
+              ),
+              const Text('MCQ Test',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFFF6B00))),
               const SizedBox(height: 15),
               _buildGrid(mcqTest),
               const Padding(
@@ -312,7 +420,11 @@ class JobDetails extends StatelessWidget {
                   thickness: 2.0,
                 ),
               ),
-              const Text('Technical Interview', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500,color: Color(0xFFFF6B00))),
+              const Text('Technical Interview',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFFF6B00))),
               const SizedBox(height: 15),
               _buildGrid(techIV),
               const Padding(
@@ -321,8 +433,12 @@ class JobDetails extends StatelessWidget {
                   color: Color(0xFFFF6B00),
                   thickness: 2.0,
                 ),
-              ),     
-              const Text('HR Interview', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500,color: Color(0xFFFF6B00))),
+              ),
+              const Text('HR Interview',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFFF6B00))),
               const SizedBox(height: 15),
               _buildGrid(hrIV),
               const SizedBox(height: 40),
@@ -330,8 +446,15 @@ class JobDetails extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Ready to begin your mock interview? ',style: TextStyle(color: Color(0xFF747474),fontSize: 15),),
-                    Icon(Icons.info, color: Color(0xFFC3C3C3),size: 15,)
+                    Text(
+                      'Ready to begin your mock interview? ',
+                      style: TextStyle(color: Color(0xFF747474), fontSize: 15),
+                    ),
+                    Icon(
+                      Icons.info,
+                      color: Color(0xFFC3C3C3),
+                      size: 15,
+                    )
                   ],
                 ),
               ),
@@ -339,28 +462,39 @@ class JobDetails extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                //Navigate to MockInterviewScreen()
-              ElevatedButton(onPressed: () {
-                context.push('/live_interview', extra: {
-                  'showNotification': true,
-                  'jobTitle': jobTitle,
-                  'companyName': companyName, 
-                  'responsibilities': responsibilities,
-                  'jobDesc': jobDesc,
-                  'isNormal': true
-                });
-                },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6B00),foregroundColor: Colors.white), child: const Text('Normal Mode'),),
-              ElevatedButton(onPressed: () {
-                context.push('/live_interview', extra: {
-                  'showNotification': true, 
-                  'jobTitle': jobTitle,
-                  'companyName': companyName, 
-                  'responsibilities': responsibilities,
-                  'jobDesc': jobDesc, 
-                  'isNormal': false
-                });
-              },style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD9D9D9),foregroundColor: Colors.white), child: const Text('Intensive Mode'),),
-
+                  //Navigate to MockInterviewScreen()
+                  ElevatedButton(
+                    onPressed: () {
+                      context.push('/live_interview', extra: {
+                        'showNotification': true,
+                        'jobTitle': jobTitle,
+                        'companyName': companyName,
+                        'responsibilities': responsibilities,
+                        'jobDesc': jobDesc,
+                        'isNormal': true
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF6B00),
+                        foregroundColor: Colors.white),
+                    child: const Text('Normal Mode'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.push('/live_interview', extra: {
+                        'showNotification': true,
+                        'jobTitle': jobTitle,
+                        'companyName': companyName,
+                        'responsibilities': responsibilities,
+                        'jobDesc': jobDesc,
+                        'isNormal': false
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD9D9D9),
+                        foregroundColor: Colors.white),
+                    child: const Text('Intensive Mode'),
+                  ),
                 ],
               ),
             ],
@@ -369,52 +503,54 @@ class JobDetails extends StatelessWidget {
       ),
     );
   }
-  Widget _buildGrid(Map<String, String> data){
+
+  Widget _buildGrid(Map<String, String> data) {
     return GridView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 3,
-      childAspectRatio: 10,
-    ),
-    itemCount: data.length,
-    itemBuilder: (context, index) {
-      final entry = data.entries.toList()[index];
-      return Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            left: BorderSide(
-              color: Color(0xFFFF6B00),
-              width: 2.0,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 10,
+      ),
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        final entry = data.entries.toList()[index];
+        return Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: Color(0xFFFF6B00),
+                width: 2.0,
+              ),
             ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: RichText( // Use RichText
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '${entry.key}: ',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF747474),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: RichText(
+              // Use RichText
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '${entry.key}: ',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF747474),
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: entry.value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF747474),
+                  TextSpan(
+                    text: entry.value,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF747474),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-   );
+        );
+      },
+    );
   }
 }

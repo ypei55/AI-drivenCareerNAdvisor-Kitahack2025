@@ -20,7 +20,14 @@ class MockInterviewScreen extends StatefulWidget {
   final String jobDesc;
   final bool isNormal;
   // final List<CameraDescription> cameras;
-  const MockInterviewScreen({super.key, required this.jobTitle, required this.companyName,this.showNotification=true, required this.responsibilities, required this.jobDesc, required this.isNormal});
+  const MockInterviewScreen(
+      {super.key,
+      required this.jobTitle,
+      required this.companyName,
+      this.showNotification = true,
+      required this.responsibilities,
+      required this.jobDesc,
+      required this.isNormal});
   @override
   _MockInterviewScreenState createState() => _MockInterviewScreenState();
 }
@@ -52,7 +59,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   AIService aiService = AIService();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _initializeApp();
   }
@@ -80,7 +87,10 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   //Reading question with time interval
   void _startReadingQuestions() async {
     String aiResponse = await aiService.generateInterviewQuestionsWithHints(
-        widget.jobTitle, widget.companyName, widget.jobDesc, widget.responsibilities);
+        widget.jobTitle,
+        widget.companyName,
+        widget.jobDesc,
+        widget.responsibilities);
     Map<String, List<String>> parsedData = parseQuestionsAndHints(aiResponse);
 
     setState(() {
@@ -109,17 +119,16 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
 
     print(interviewData); // Debug output
 
-    await _speak('The interview session has ended. You can click end button to end the interview session.');
-
-
+    await _speak(
+        'The interview session has ended. You can click end button to end the interview session.');
   }
-
 
   Future<void> _speak(String text) async {
     await flutterTts.setLanguage("en-US");
     await flutterTts.setPitch(1.0);
     await flutterTts.speak(text);
-    await flutterTts.awaitSpeakCompletion(true); // Ensures it waits until speaking is done
+    await flutterTts
+        .awaitSpeakCompletion(true); // Ensures it waits until speaking is done
   }
 
   Future<String> _recordAnswer() async {
@@ -156,8 +165,10 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
     // await Permission.microphone.request();
     await _getAvailableCameras();
     _initRecording();
-    _speak('The interview session will start now, there are five questions and you have 1 minute to answer each questions');
-    await flutterTts.awaitSpeakCompletion(true); // Ensures it waits until speaking is done
+    _speak(
+        'The interview session will start now, there are five questions and you have 1 minute to answer each questions');
+    await flutterTts
+        .awaitSpeakCompletion(true); // Ensures it waits until speaking is done
     await _speak(''); // warm-up
     await Future.delayed(const Duration(milliseconds: 200)); // slight buffer
     _startReadingQuestions();
@@ -176,18 +187,17 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
       ..height = html.window.innerHeight!
       ..controls = true;
 
-    ui.platformViewRegistry.registerViewFactory('recorded-video', (int_) => _recordedVideo);
+    ui.platformViewRegistry
+        .registerViewFactory('recorded-video', (int_) => _recordedVideo);
   }
 
   Future<void> _startCameraAndRecording() async {
     try {
-      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia(
-          {
-            'video': {'cursor': 'always', 'displaySurface': 'monitor'},
-            'audio': true
-          });
+      _mediaStream = await html.window.navigator.mediaDevices?.getUserMedia({
+        'video': {'cursor': 'always', 'displaySurface': 'monitor'},
+        'audio': true
+      });
       if (_mediaStream != null) {
-
         _recordedVideo.srcObject = _mediaStream;
         _startRecording(_mediaStream!);
       }
@@ -197,12 +207,12 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   }
 
   void _startRecording(html.MediaStream stream) {
-    try{
+    try {
       // Ensure audio is enabled in MediaRecorder options
       final options = {
         'audioBitsPerSecond': 128000,
         'videoBitsPerSecond': 2500000,
-        'mimeType': 'video/webm;codecs=vp9,opus' 
+        'mimeType': 'video/webm;codecs=vp9,opus'
       };
 
       _mediaRecorder = html.MediaRecorder(stream);
@@ -219,7 +229,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
         final url = html.Url.createObjectUrl(_recordingBlob!);
         setState(() => _recordedVideoUrl = url);
       });
-    }catch(e){
+    } catch (e) {
       print('Recording error: $e');
     }
   }
@@ -258,17 +268,19 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
         Permission.storage,
       ].request();
 
-
-      if (statuses[Permission.microphone]!.isGranted && statuses[Permission.camera]!.isGranted&& statuses[Permission.storage]!.isGranted) {
+      if (statuses[Permission.microphone]!.isGranted &&
+          statuses[Permission.camera]!.isGranted &&
+          statuses[Permission.storage]!.isGranted) {
         // Permissions granted.
-      }
-      else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Microphone, camera, and storage permission are required')),);
+          const SnackBar(
+              content: Text(
+                  'Microphone, camera, and storage permission are required')),
+        );
       }
     }
   }
-
 
   Future<void> _getAvailableCameras() async {
     try {
@@ -328,7 +340,8 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Mockinterviewheader(jobTitle:widget.jobTitle, companyName:widget.companyName),
+      appBar: Mockinterviewheader(
+          jobTitle: widget.jobTitle, companyName: widget.companyName),
       backgroundColor: const Color(0xFFFFF5EC),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
@@ -361,26 +374,30 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                       color: Colors.white.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: widget.isNormal ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.info_outlined,color: Colors.black),
-                        SizedBox(width: 5),
-                        Container(
-                          width: hint == '' ? 15 : 600,
-                          child: Padding(
-                            padding: EdgeInsets.all(3.0),
-                            child: Text(
-                              hint,
-                              maxLines: 5,
-                              softWrap: true,  // Allows text to wrap to the next line
-                              overflow: TextOverflow.visible,  // Ensures it remains visible
-                            ),
-                          ),
-                        ),
-                      ],
-                    ) : SizedBox()
-                ),
+                    child: widget.isNormal
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.info_outlined,
+                                  color: Colors.black),
+                              SizedBox(width: 5),
+                              Container(
+                                width: hint == '' ? 15 : 600,
+                                child: Padding(
+                                  padding: EdgeInsets.all(3.0),
+                                  child: Text(
+                                    hint,
+                                    maxLines: 5,
+                                    softWrap:
+                                        true, // Allows text to wrap to the next line
+                                    overflow: TextOverflow
+                                        .visible, // Ensures it remains visible
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : SizedBox()),
               ),
             if (_isRecording)
               Positioned(
@@ -407,35 +424,40 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
               child: SizedBox(
                 width: 150,
                 height: 100,
-                child: (_cameraActive && _availableCameras != null && _availableCameras!.isNotEmpty
+                child: (_cameraActive &&
+                        _availableCameras != null &&
+                        _availableCameras!.isNotEmpty
                     ? (_initializeCameraControllerFuture != null
-                    ? FutureBuilder<void>(
-                  future: _initializeCameraControllerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return CameraPreview(_cameraController!);
-                    }
-                    return const Center(child: CircularProgressIndicator());
-                  },
-                )
+                        ? FutureBuilder<void>(
+                            future: _initializeCameraControllerFuture,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return CameraPreview(_cameraController!);
+                              }
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            },
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: const Center(
+                                child: CircularProgressIndicator()),
+                          ))
                     : Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Center(child: CircularProgressIndicator()),
-                ))
-                    : Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.videocam_off,
-                      size: 50,
-                      color: Colors.grey,
-                    ),
-                  ),
-                )),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.videocam_off,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      )),
               ),
             ),
             Positioned(
@@ -444,8 +466,10 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
               child: Row(
                 children: [
                   _buildIconButton(
-                    _cameraActive ? Icons.videocam_rounded : Icons.videocam_off_rounded,
-                        () {
+                    _cameraActive
+                        ? Icons.videocam_rounded
+                        : Icons.videocam_off_rounded,
+                    () {
                       setState(() {
                         _cameraActive = !_cameraActive;
                         if (_cameraActive) {
@@ -458,7 +482,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                   ),
                   _buildIconButton(
                     Icons.stop_rounded,
-                        () {
+                    () {
                       _stopRecording();
                     },
                   ),

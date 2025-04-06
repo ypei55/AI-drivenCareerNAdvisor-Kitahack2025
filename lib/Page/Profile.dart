@@ -338,7 +338,7 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0),
                         child: Text(
-                          '- AI generate perfect resume                            - Improve resume',
+                          '- Download Resume                            - Personalized Upskills',
                           style: TextStyle(color: Colors.grey, fontSize: 18),
                           maxLines: 2,
                         ),
