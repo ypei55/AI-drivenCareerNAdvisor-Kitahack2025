@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 class CheckerResults extends StatelessWidget {
   final String aiResponse;
 
-  CheckerResults({super.key, required this.aiResponse});
+  const CheckerResults({super.key, required this.aiResponse});
 
   Map<String, String> _parseAIResponse(String response) {
     Map<String, String> sections = {
@@ -84,8 +84,8 @@ class CheckerResults extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: const Text(
+                  const Center(
+                    child: Text(
                       "Checking Results",
                       style: TextStyle(
                           fontSize: 25,
@@ -107,17 +107,17 @@ class CheckerResults extends StatelessWidget {
                       children: [
                         Text(
                           "Matching Score: ${parsedResponse['Matching Score']}",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         RichText(
                           text: TextSpan(
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black), // Default style
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: "Missing Keywords:\n", // Bold label
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
@@ -128,14 +128,14 @@ class CheckerResults extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         RichText(
                           text: TextSpan(
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black), // Default style
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: "Suggestions:\n", // Bold label
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
@@ -150,8 +150,8 @@ class CheckerResults extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Center(
-                    child: const Text(
+                  const Center(
+                    child: Text(
                       "Revised Version",
                       style: TextStyle(
                           fontSize: 25,
@@ -174,7 +174,7 @@ class CheckerResults extends StatelessWidget {
                         Text(
                           parsedResponse['Revised Resume'] ??
                               "No revised resume available.",
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),

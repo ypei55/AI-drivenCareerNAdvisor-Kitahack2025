@@ -9,6 +9,8 @@ import '../Services/AIServices.dart';
 import '../Services/Provider.dart';
 
 class SignUp extends StatefulWidget implements PreferredSizeWidget {
+  const SignUp({super.key});
+
   @override
   State<SignUp> createState() => _SignUpState();
 
@@ -38,7 +40,7 @@ class _SignUpState extends State<SignUp> {
     response = cleanJson(response);
 
     if (!response.startsWith('{') && !response.startsWith('[')) {
-      throw FormatException("Unexpected response format: Not valid JSON");
+      throw const FormatException("Unexpected response format: Not valid JSON");
     }
     return jsonDecode(response);
   }
@@ -48,8 +50,9 @@ class _SignUpState extends State<SignUp> {
     String query1 = _jobRoleController.text.trim();
     String query2 = _hardSkillController.text.trim();
 
-    if (query.isEmpty || query1.isEmpty || query2.isEmpty)
+    if (query.isEmpty || query1.isEmpty || query2.isEmpty) {
       return;
+    }
 
     try {
       // Get the recommendation data
@@ -68,7 +71,7 @@ class _SignUpState extends State<SignUp> {
       if (!recommendData.containsKey('recommendations') || recommendData['recommendations'] is! List) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to fetch recommendations.")));
+              const SnackBar(content: Text("Failed to fetch recommendations.")));
         }
         return;
       }
@@ -90,7 +93,7 @@ class _SignUpState extends State<SignUp> {
       print("JSON Decode Error: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Invalid response format.")));
+            const SnackBar(content: Text("Invalid response format.")));
       }
     }
   }
@@ -120,7 +123,7 @@ class _SignUpState extends State<SignUp> {
       dynamic parseJson(String response) {
         response = cleanJson(response);
         if (!response.startsWith('{') && !response.startsWith('[')) {
-          throw FormatException("Unexpected response format: Not valid JSON");
+          throw const FormatException("Unexpected response format: Not valid JSON");
         }
         return jsonDecode(response);
       }
@@ -133,25 +136,25 @@ class _SignUpState extends State<SignUp> {
       // Handle API error responses
       if (jobData.containsKey('error')) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch job data.")));
+            const SnackBar(content: Text("Failed to fetch job data.")));
         return;
       }
 
       if (!skillData.containsKey('skills') || skillData['skills'] is! List) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch skills.")));
+            const SnackBar(content: Text("Failed to fetch skills.")));
         return;
       }
 
       if (!companyData.containsKey('companies') || companyData['companies'] is! List) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch hiring companies.")));
+            const SnackBar(content: Text("Failed to fetch hiring companies.")));
         return;
       }
 
       if (!salaryData.containsKey('salary')) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to fetch salary.")));
+            const SnackBar(content: Text("Failed to fetch salary.")));
         return;
       }
 
@@ -186,7 +189,7 @@ class _SignUpState extends State<SignUp> {
     } catch (e) {
       print("JSON Decode Error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Invalid response format.")));
+          const SnackBar(content: Text("Invalid response format.")));
     }
   }
 
@@ -195,12 +198,12 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       appBar: NavBarSignup(),
       body: Container(
-        color: Color( 0xFFFFF5EC),
+        color: const Color( 0xFFFFF5EC),
         height:double.infinity,
         width: double.infinity,
         child: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsetsDirectional.only(top:30,start: 50,end:50),
+            margin: const EdgeInsetsDirectional.only(top:30,start: 50,end:50),
             height: 1300,
             width: 1350,
             decoration: BoxDecoration(
@@ -210,28 +213,28 @@ class _SignUpState extends State<SignUp> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Sign up',
+                const Text('Sign up',
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFFF2994A),
                   ),),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
-                Text('Sign up to enjoy the feature of TalentTrail',
+                const Text('Sign up to enjoy the feature of TalentTrail',
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.grey,
                   ),),
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
                 Container(
-                  margin: EdgeInsetsDirectional.only(start: 50,end: 50),
+                  margin: const EdgeInsetsDirectional.only(start: 50,end: 50),
                   child: Column(
                     children: [
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text('Basic Information',
@@ -250,7 +253,7 @@ class _SignUpState extends State<SignUp> {
                           )
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -260,16 +263,16 @@ class _SignUpState extends State<SignUp> {
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Name",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -280,23 +283,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 100,
                           ),
                           SizedBox(
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Email",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -309,7 +312,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -319,16 +322,16 @@ class _SignUpState extends State<SignUp> {
                             width:1300,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Location",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -341,7 +344,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -351,16 +354,16 @@ class _SignUpState extends State<SignUp> {
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Phone Number",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -371,23 +374,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 100,
                           ),
                           SizedBox(
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Password",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -400,10 +403,10 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 40,
                       ),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text('Education Background',
@@ -422,7 +425,7 @@ class _SignUpState extends State<SignUp> {
                           )
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -432,16 +435,16 @@ class _SignUpState extends State<SignUp> {
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Highest Education Level",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -452,7 +455,7 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 100,
                           ),
                           SizedBox(
@@ -460,16 +463,16 @@ class _SignUpState extends State<SignUp> {
                             child: TextField(
                               controller: _fieldStudyController,
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Field of Study Major",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -482,7 +485,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -492,16 +495,16 @@ class _SignUpState extends State<SignUp> {
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "University/ Institution Name",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -512,23 +515,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 100,
                           ),
                           SizedBox(
                             width:200,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Graduation Year",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -541,10 +544,10 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 40,
                       ),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text('Professional Information',
@@ -563,7 +566,7 @@ class _SignUpState extends State<SignUp> {
                           )
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -573,16 +576,16 @@ class _SignUpState extends State<SignUp> {
                             width:300,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Year of Work Experience",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -593,7 +596,7 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 100,
                           ),
                           SizedBox(
@@ -601,16 +604,16 @@ class _SignUpState extends State<SignUp> {
                             child: TextField(
                               controller: _jobRoleController,
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Job Role",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -623,7 +626,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -633,16 +636,16 @@ class _SignUpState extends State<SignUp> {
                             width:1300,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Past Work Experience ",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -655,10 +658,10 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 40,
                       ),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text('Skills & Certifications',
@@ -677,7 +680,7 @@ class _SignUpState extends State<SignUp> {
                           )
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -688,16 +691,16 @@ class _SignUpState extends State<SignUp> {
                             child: TextField(
                               controller: _hardSkillController,
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Hard Skills",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -708,23 +711,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 100,
                           ),
                           SizedBox(
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Soft Skills",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -737,7 +740,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -747,16 +750,16 @@ class _SignUpState extends State<SignUp> {
                             width:1300,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Certifications & Licenses ",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -769,10 +772,10 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 40,
                       ),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text('Career Preferences & Interests',
@@ -791,7 +794,7 @@ class _SignUpState extends State<SignUp> {
                           )
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -801,16 +804,16 @@ class _SignUpState extends State<SignUp> {
                             width:400,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Preferred Work Mode",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -821,23 +824,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 50,
                           ),
                           SizedBox(
                             width:400,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Industries of Interest",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -848,23 +851,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 50,
                           ),
                           SizedBox(
                             width:400,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Salary Expectation",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -877,7 +880,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
@@ -887,16 +890,16 @@ class _SignUpState extends State<SignUp> {
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Job Prioritization Factors",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -907,23 +910,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 100,
                           ),
                           SizedBox(
                             width:600,
                             child: TextField(
                               decoration: InputDecoration(
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                       color: Color(0xFFF2994A)
                                   ),
                                   labelText: "Preferred Locations for Work",
-                                  focusedBorder: OutlineInputBorder(
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
                                   ),
-                                  enabledBorder: OutlineInputBorder(
+                                  enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Color(0xFFF2994A)
                                       )
@@ -939,7 +942,7 @@ class _SignUpState extends State<SignUp> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height:40,
                 ),
                 GestureDetector(
@@ -949,7 +952,7 @@ class _SignUpState extends State<SignUp> {
                           context: context,
                           barrierDismissible: false,
                           builder: (context) =>
-                              Center(
+                              const Center(
                                 child: CircularProgressIndicator(),
                               )
                       );
@@ -966,33 +969,33 @@ class _SignUpState extends State<SignUp> {
                       }
                     },
                   child: Container(
-                    margin: EdgeInsetsDirectional.only(start: 100,end:100),
-                    padding: EdgeInsets.symmetric(vertical: 4,horizontal: 110),
+                    margin: const EdgeInsetsDirectional.only(start: 100,end:100),
+                    padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 110),
                     width: 300,
                     height: 40,
                     decoration: BoxDecoration(
-                        color: Color(0xFFF2994A),
+                        color: const Color(0xFFF2994A),
                         borderRadius: BorderRadius.circular(10)
                     ),
-                    child: Text('Sign up',
+                    child: const Text('Sign up',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 23
                       ),),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Already have an account?',
+                    const Text('Already have an account?',
                         style:TextStyle(
                           color: Colors.grey,
                           fontSize: 15,
                         )),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     GestureDetector(
@@ -1000,7 +1003,7 @@ class _SignUpState extends State<SignUp> {
                         context.go('/');
                       },
                       child: Container(
-                        child: Text('Log in',
+                        child: const Text('Log in',
                           style: TextStyle(
                               color: Color(0xFFF2994A),
                               fontSize: 15,
@@ -1021,4 +1024,4 @@ class _SignUpState extends State<SignUp> {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(60); }
+  Size get preferredSize => const Size.fromHeight(60); }

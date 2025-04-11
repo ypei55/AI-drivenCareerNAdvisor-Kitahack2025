@@ -131,7 +131,7 @@ class JobCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Role: ${role}',
+                    Text('Role: $role',
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 2),
@@ -357,7 +357,7 @@ class JobDetails extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Container(
-                          constraints: BoxConstraints(
+                          constraints: const BoxConstraints(
                             maxHeight: 100,
                             maxWidth: 100,
                           ),
@@ -400,7 +400,7 @@ class JobDetails extends StatelessWidget {
                     requiredSkills.map((skill) => Text('- $skill')).toList(),
               ),
               const Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsets.symmetric(vertical: 20),
                 child: Divider(
                   color: Color(0xFFFF6B00),
                   thickness: 2.0,

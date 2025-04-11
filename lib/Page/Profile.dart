@@ -5,6 +5,8 @@ import '../Component/TopNavBar.dart';
 import '../Services/AIServices.dart';
 
 class Profile extends StatefulWidget {
+  const Profile({super.key});
+
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -43,9 +45,9 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopNavBar(page: 'profile'),
-      backgroundColor: Color(0xFFFFF5EC),
+      backgroundColor: const Color(0xFFFFF5EC),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Padding(
           padding: const EdgeInsets.only(left: 30, top: 20, bottom: 20),
           child: Row(
@@ -55,11 +57,11 @@ class _ProfileState extends State<Profile> {
                 children: [
                   Container(
                   width: 1000,
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
                           blurRadius: 5,
@@ -76,31 +78,31 @@ class _ProfileState extends State<Profile> {
                           children: [
                             Row(
                               children: [
-                                CircleAvatar(
+                                const CircleAvatar(
                                   radius: 45,
                                   backgroundImage: AssetImage('profile.png'), // Replace with your image
                                 ),
-                                SizedBox(width: 10,),
+                                const SizedBox(width: 10,),
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     "Free Tier",
                                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
-                            Text(
+                            const SizedBox(height: 10),
+                            const Text(
                               "Micheal Wong",
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: 5),
-                            Row(
+                            const SizedBox(height: 5),
+                            const Row(
                               children: [
                                 Icon(Icons.email, size: 20),
                                 SizedBox(width: 5),
@@ -112,12 +114,12 @@ class _ProfileState extends State<Profile> {
                             ),
                           ],
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         // Vertical Divider
                         Container(width: 1, height: 170, color: Colors.black26),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         // Right Education Section
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -151,14 +153,14 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 50,),
+                  const SizedBox(height: 50,),
                   Container(
                     width: 1000,
                     height: 332,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
                           blurRadius: 5,
@@ -173,7 +175,7 @@ class _ProfileState extends State<Profile> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded( // Prevents text overflow
+                              const Expanded( // Prevents text overflow
                                 child: Text(
                                   "Lesson Achieved",
                                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900, color: Color(0xFFF2994A)),
@@ -183,7 +185,7 @@ class _ProfileState extends State<Profile> {
                                 onPressed: () {
                                   // Implement navigation to a detailed interview list
                                 },
-                                icon: Icon(Icons.refresh, size: 25,),
+                                icon: const Icon(Icons.refresh, size: 25,),
                               ),
                             ],
                           ),
@@ -193,7 +195,7 @@ class _ProfileState extends State<Profile> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
+                              SizedBox(
                                 width: 875,
                                 height: 220,
                                 child: ListView.builder(
@@ -222,7 +224,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                                 child: IconButton(
                                     onPressed: (){},
-                                    icon: Icon(
+                                    icon: const Icon(
                                         Icons.navigate_next,
                                       color: Colors.white,
                                     )),
@@ -233,7 +235,7 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 50,),
+                  const SizedBox(height: 50,),
                   Row(
                     children: [
                       // Experience Section (Editable)
@@ -244,7 +246,7 @@ class _ProfileState extends State<Profile> {
                             () => setState(() => isEditingExperience = !isEditingExperience),
                       ),
 
-                      SizedBox(width: 50,),
+                      const SizedBox(width: 50,),
 
                       // Interest Section (Editable)
                       _editableSection(
@@ -257,14 +259,14 @@ class _ProfileState extends State<Profile> {
                   ),
                 ],
               ),
-              SizedBox(width: 70,),
+              const SizedBox(width: 70,),
               Container(
                 width: 350,
                 height: 300,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 5,
@@ -276,28 +278,28 @@ class _ProfileState extends State<Profile> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                           'Unlock your full potential with Premium Tier',
                         style: TextStyle(color: Colors.grey, fontSize: 18),
                         maxLines: 2,
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 15,),
+                      const SizedBox(height: 15,),
                       Container(
                         width: 170,
                         height: 80,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Color(0xFFFAD6B7),
+                          color: const Color(0xFFFAD6B7),
                         ),
                         child: Row(
                           children: [
-                            SizedBox(width: 15,),
-                            CircleAvatar(
+                            const SizedBox(width: 15,),
+                            const CircleAvatar(
                               backgroundImage: AssetImage('profile.png'), // Ensure correct path
                               radius: 20,
                             ),
-                            SizedBox(width: 15,),
+                            const SizedBox(width: 15,),
                             GestureDetector(
                               onTap: () async {
                                 AIService aiService = AIService();
@@ -312,10 +314,10 @@ class _ProfileState extends State<Profile> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: Color(0xFFFF51007),
+                                  color: const Color(0xffff51007),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
                                   child: Text(
                                     "Premium Tier",
                                     style: TextStyle(color: Colors.white, fontSize: 12),
@@ -328,15 +330,15 @@ class _ProfileState extends State<Profile> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 15,),
-                      Text(
+                      const SizedBox(height: 15,),
+                      const Text(
                         'With benefits of:',
                         style: TextStyle(color: Colors.grey, fontSize: 18),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 10,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 25.0),
+                      const SizedBox(height: 10,),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 25.0),
                         child: Text(
                           '- Download Resume                            - Personalized Upskills',
                           style: TextStyle(color: Colors.grey, fontSize: 18),
@@ -358,11 +360,11 @@ class _ProfileState extends State<Profile> {
   Widget _editableSection(String title, TextEditingController controller, bool isEditing, VoidCallback onEditPress) {
     return Container(
       width: 475, // Set a width constraint
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 5,
@@ -375,20 +377,20 @@ class _ProfileState extends State<Profile> {
         children: [
           Row(
             children: [
-              Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
-              Spacer(),
+              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
+              const Spacer(),
               GestureDetector(
                 onTap: onEditPress,
-                child: Icon(Icons.edit, color: Colors.black54),
+                child: const Icon(Icons.edit, color: Colors.black54),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           TextField(
             controller: controller,
             enabled: isEditing,
             maxLines: 3,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
             ),
           )
@@ -421,13 +423,13 @@ class EducationItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.asset(logo, width: 30, height: 30), // University Logo
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(university, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text(duration, style: TextStyle(fontSize: 14)),
-            Text(degree, style: TextStyle(fontSize: 14)),
+            Text(university, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(duration, style: const TextStyle(fontSize: 14)),
+            Text(degree, style: const TextStyle(fontSize: 14)),
           ],
         ),
       ],

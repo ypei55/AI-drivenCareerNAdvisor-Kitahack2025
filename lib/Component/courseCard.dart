@@ -31,7 +31,7 @@ class _CourseCardState extends State<CourseCard> {
       height: 300, // Adjust height for better layout
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 10,
@@ -43,7 +43,7 @@ class _CourseCardState extends State<CourseCard> {
         children: [
           // Background Image (Upper part)
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: Image.asset(
               widget.imageUrl,
               width: double.infinity,
@@ -60,7 +60,7 @@ class _CourseCardState extends State<CourseCard> {
             height: 210, // Same as image height
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 color: Colors.black.withOpacity(0.3),
               ),
             ),
@@ -90,7 +90,7 @@ class _CourseCardState extends State<CourseCard> {
             right: 0,
             height: 90, // White section height
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
@@ -99,7 +99,7 @@ class _CourseCardState extends State<CourseCard> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(width: 10,),
+                      const SizedBox(width: 10,),
                       Text(
                         "${widget.chapters}",
                         style: const TextStyle(
@@ -111,7 +111,7 @@ class _CourseCardState extends State<CourseCard> {
                       ),
                     ],
                   ),
-                  SizedBox(width: 110,),
+                  const SizedBox(width: 110,),
                   Column(
                     children: [
                       Text(
@@ -125,13 +125,13 @@ class _CourseCardState extends State<CourseCard> {
                       ),
                     ],
                   ),
-                  SizedBox(width: 130,),
+                  const SizedBox(width: 130,),
                   Column(
                     children: [
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Text(
                         '${widget.progress}%',
-                        style: TextStyle(fontSize: 20, color: Colors.grey),
+                        style: const TextStyle(fontSize: 20, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -151,7 +151,7 @@ class _CourseCardState extends State<CourseCard> {
                 onTap: () {
                 },
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   width: 70, // Slightly enlarge on hover
                   height: 70,
                   decoration: BoxDecoration(
@@ -159,7 +159,7 @@ class _CourseCardState extends State<CourseCard> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       if (_isHovered)
-                        BoxShadow(
+                        const BoxShadow(
                           color: Colors.black26,
                           blurRadius: 8,
                           spreadRadius: 2,
@@ -176,7 +176,7 @@ class _CourseCardState extends State<CourseCard> {
                           value: widget.progress/100,
                           strokeWidth: 7,
                           backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
                         ),
                       ),
                       const Icon(

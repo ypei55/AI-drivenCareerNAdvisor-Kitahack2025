@@ -9,6 +9,8 @@ import '../Services/AIServices.dart';
 
 
 class Login extends StatefulWidget implements PreferredSizeWidget {
+  const Login({super.key});
+
   @override
   State<Login> createState() => _LoginState();
 
@@ -19,21 +21,22 @@ class Login extends StatefulWidget implements PreferredSizeWidget {
 
 class _LoginState extends State<Login> {
   final FirebaseAuthService _auth = FirebaseAuthService();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
 
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NavBarLogIn(),
       body: Container(
-        color: Color( 0xFFFFF5EC),
+        color: const Color( 0xFFFFF5EC),
         height:double.infinity,
         width: double.infinity,
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 100,
             ),
             Container(
@@ -46,22 +49,22 @@ class _LoginState extends State<Login> {
               child: Row(
                 children: [
                   Container(
-                    margin: EdgeInsetsDirectional.only(start:70,top:40),
+                    margin: const EdgeInsetsDirectional.only(start:70,top:40),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Log in',
+                        const Text('Log in',
                           style: TextStyle(
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFFF2994A),
                           ),),
-                        Text('Log in to improve your career path',
+                        const Text('Log in to improve your career path',
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.grey
                         ),),
-                        SizedBox(
+                        const SizedBox(
                           height: 60,
                         ),
                         SizedBox(
@@ -69,16 +72,16 @@ class _LoginState extends State<Login> {
                           child: TextField(
                             controller: _emailController,
                             decoration: InputDecoration(
-                              labelStyle: TextStyle(
+                              labelStyle: const TextStyle(
                                 color: Color(0xFFF2994A)
                               ),
                               labelText: "Email",
-                              focusedBorder: OutlineInputBorder(
+                              focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xFFF2994A)
                                 )
                               ),
-                              enabledBorder: OutlineInputBorder(
+                              enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xFFF2994A)
                                 )
@@ -89,7 +92,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         SizedBox(
@@ -98,16 +101,16 @@ class _LoginState extends State<Login> {
                             controller: _passwordController,
                             obscureText: _obscureText,
                             decoration: InputDecoration(
-                                labelStyle: TextStyle(
+                                labelStyle: const TextStyle(
                                     color: Color(0xFFF2994A)
                                 ),
                                 labelText: "Password",
-                                focusedBorder: OutlineInputBorder(
+                                focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Color(0xFFF2994A)
                                     )
                                 ),
-                                enabledBorder: OutlineInputBorder(
+                                enabledBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Color(0xFFF2994A)
                                     )
@@ -127,41 +130,41 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 60,
                         ),
                         GestureDetector(
                           onTap: _signIn,
                           child: Container(
-                            margin: EdgeInsetsDirectional.only(start: 100,end:100),
-                            padding: EdgeInsets.symmetric(vertical: 4,horizontal: 130),
+                            margin: const EdgeInsetsDirectional.only(start: 100,end:100),
+                            padding: const EdgeInsets.symmetric(vertical: 4,horizontal: 130),
                             width: 350,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Color(0xFFF2994A),
+                              color: const Color(0xFFF2994A),
                               borderRadius: BorderRadius.circular(10)
                             ),
-                            child: Text('Log in',
+                            child: const Text('Log in',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 23
                             ),),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 190,
                             ),
-                            Text('Need an account?',
+                            const Text('Need an account?',
                             style:TextStyle(
                               color: Colors.grey,
                               fontSize: 15,
                             )),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             GestureDetector(
@@ -169,7 +172,7 @@ class _LoginState extends State<Login> {
                                 context.go('/signup');
                               },
                               child: Container(
-                                child: Text('Sign up',
+                                child: const Text('Sign up',
                                 style: TextStyle(
                                   color: Color(0xFFF2994A),
                                   fontSize: 15,
@@ -184,12 +187,12 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width:50
                   ),
                   Image.asset("assets/Login.png",
                     width: 600,
-                    alignment: Alignment(3, 0),
+                    alignment: const Alignment(3, 0),
                   )
 
                 ],
@@ -209,17 +212,17 @@ class _LoginState extends State<Login> {
 
     if (user != null){
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("User is successfully signed in")
+          const SnackBar(content: Text("User is successfully signed in")
           ));
       print("User is successfully signed in");
       context.go('/home');
     }else{
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Some error happend")
+          const SnackBar(content: Text("Some error happend")
           ));
       print('Some error happend');
     }
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(60); }
+  Size get preferredSize => const Size.fromHeight(60); }

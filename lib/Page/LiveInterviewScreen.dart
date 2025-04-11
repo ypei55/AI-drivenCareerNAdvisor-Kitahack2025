@@ -150,10 +150,10 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
           userAnswer = result.recognizedWords;
         });
       },
-      listenFor: Duration(seconds: 20),
+      listenFor: const Duration(seconds: 20),
     );
 
-    await Future.delayed(Duration(seconds: 20)); // Ensure full 30s wait
+    await Future.delayed(const Duration(seconds: 20)); // Ensure full 30s wait
     await _speech.stop(); // Stop recording after 30 seconds
 
     return userAnswer; // Return the recorded answer
@@ -354,7 +354,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.96,
                   height: MediaQuery.of(context).size.height,
                   child: Image.asset(
@@ -380,11 +380,11 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                             children: [
                               const Icon(Icons.info_outlined,
                                   color: Colors.black),
-                              SizedBox(width: 5),
-                              Container(
+                              const SizedBox(width: 5),
+                              SizedBox(
                                 width: hint == '' ? 15 : 600,
                                 child: Padding(
-                                  padding: EdgeInsets.all(3.0),
+                                  padding: const EdgeInsets.all(3.0),
                                   child: Text(
                                     hint,
                                     maxLines: 5,
@@ -397,7 +397,7 @@ class _MockInterviewScreenState extends State<MockInterviewScreen> {
                               ),
                             ],
                           )
-                        : SizedBox()),
+                        : const SizedBox()),
               ),
             if (_isRecording)
               Positioned(

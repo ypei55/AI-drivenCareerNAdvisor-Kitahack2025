@@ -11,6 +11,8 @@ import '../Component/TopNavBar.dart';
 import '../Services/AIServices.dart';
 
 class Home extends StatefulWidget implements PreferredSizeWidget {
+  const Home({super.key});
+
   @override
   State<Home> createState() => _HomeState();
 
@@ -46,7 +48,7 @@ class _HomeState extends State<Home> {
         Provider.of<RecommendationProvider>(context).companies;
     String salary = Provider.of<RecommendationProvider>(context).salary;
 
-    Future<void> _onSearch() async {
+    Future<void> onSearch() async {
       String query = _searchController.text.trim();
       if (query.isEmpty) return;
 
@@ -75,7 +77,7 @@ class _HomeState extends State<Home> {
         dynamic parseJson(String response) {
           response = cleanJson(response);
           if (!response.startsWith('{') && !response.startsWith('[')) {
-            throw FormatException("Unexpected response format: Not valid JSON");
+            throw const FormatException("Unexpected response format: Not valid JSON");
           }
           return jsonDecode(response);
         }
@@ -88,26 +90,26 @@ class _HomeState extends State<Home> {
         // Handle API error responses
         if (jobData.containsKey('error')) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to fetch job data.")));
+              const SnackBar(content: Text("Failed to fetch job data.")));
           return;
         }
 
         if (!skillData.containsKey('skills') || skillData['skills'] is! List) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Failed to fetch skills.")));
+              .showSnackBar(const SnackBar(content: Text("Failed to fetch skills.")));
           return;
         }
 
         if (!companyData.containsKey('companies') ||
             companyData['companies'] is! List) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Failed to fetch hiring companies.")));
+              const SnackBar(content: Text("Failed to fetch hiring companies.")));
           return;
         }
 
         if (!salaryData.containsKey('salary')) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Failed to fetch salary.")));
+              .showSnackBar(const SnackBar(content: Text("Failed to fetch salary.")));
           return;
         }
 
@@ -141,11 +143,11 @@ class _HomeState extends State<Home> {
       } catch (e) {
         print("JSON Decode Error: $e");
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Invalid response format.")));
+            .showSnackBar(const SnackBar(content: Text("Invalid response format.")));
       }
     }
 
-    List<BarChartGroupData> _getBarGroups() {
+    List<BarChartGroupData> getBarGroups() {
       return List.generate(jobOpenings.length, (index) {
         return BarChartGroupData(
           x: index,
@@ -168,13 +170,13 @@ class _HomeState extends State<Home> {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
-          padding: EdgeInsetsDirectional.only(start: 50, end: 25, top: 30),
-          color: Color(0xFFFFF5EC),
+          padding: const EdgeInsetsDirectional.only(start: 50, end: 25, top: 30),
+          color: const Color(0xFFFFF5EC),
           height: 1000,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
@@ -216,7 +218,7 @@ class _HomeState extends State<Home> {
                   // ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Container(
@@ -228,16 +230,16 @@ class _HomeState extends State<Home> {
                 ),
                 child: Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
-                        Container(
+                        SizedBox(
                             width: 400,
                             height: 30,
                             child: SearchBar(
@@ -245,9 +247,9 @@ class _HomeState extends State<Home> {
                                 backgroundColor:
                                     WidgetStateProperty.all(Colors.white),
                                 hintText: 'Search for specific job',
-                                hintStyle: WidgetStatePropertyAll(
+                                hintStyle: const WidgetStatePropertyAll(
                                     TextStyle(color: Colors.grey)),
-                                leading: Icon(
+                                leading: const Icon(
                                   Icons.search,
                                   color: Colors.grey,
                                 ),
@@ -255,29 +257,29 @@ class _HomeState extends State<Home> {
                                   showDialog(
                                       context: context,
                                       barrierDismissible: false,
-                                      builder: (context) => Center(
+                                      builder: (context) => const Center(
                                             child: CircularProgressIndicator(),
                                           ));
                                   try {
-                                    await _onSearch();
+                                    await onSearch();
                                   } finally {
                                     if (Navigator.of(context).canPop()) {
                                       Navigator.of(context).pop();
                                     }
                                   }
                                 })),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 100),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 100),
                           child: Text(
                             'Job Openings',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 25),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 25,
                         ),
                         SizedBox(
@@ -285,7 +287,7 @@ class _HomeState extends State<Home> {
                           width: 400,
                           child: BarChart(
                             BarChartData(
-                                barGroups: _getBarGroups(),
+                                barGroups: getBarGroups(),
                                 titlesData: FlTitlesData(
                                   leftTitles: AxisTitles(
                                     sideTitles: SideTitles(
@@ -295,18 +297,18 @@ class _HomeState extends State<Home> {
                                           if (value % 10000 == 0) {
                                             return Text(
                                               '${(value ~/ 1000)}K',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.bold),
                                             );
                                           }
-                                          return SizedBox.shrink();
+                                          return const SizedBox.shrink();
                                         }),
                                   ),
-                                  rightTitles: AxisTitles(
+                                  rightTitles: const AxisTitles(
                                       sideTitles:
                                           SideTitles(showTitles: false)),
-                                  topTitles: AxisTitles(
+                                  topTitles: const AxisTitles(
                                     sideTitles: SideTitles(
                                         showTitles:
                                             false), // Hide numbers on top
@@ -327,7 +329,7 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 borderData: FlBorderData(show: false),
-                                gridData: FlGridData(
+                                gridData: const FlGridData(
                                   show: true,
                                   drawVerticalLine: false,
                                   drawHorizontalLine: true,
@@ -337,9 +339,9 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                     Container(
-                      margin: EdgeInsetsDirectional.only(
+                      margin: const EdgeInsetsDirectional.only(
                           start: 80, top: 25, bottom: 25, end: 80),
-                      child: VerticalDivider(
+                      child: const VerticalDivider(
                         color: Colors.black,
                         thickness: 2,
                       ),
@@ -347,8 +349,8 @@ class _HomeState extends State<Home> {
                     Column(
                       children: [
                         Container(
-                          margin: EdgeInsetsDirectional.only(top: 25),
-                          child: Column(
+                          margin: const EdgeInsetsDirectional.only(top: 25),
+                          child: const Column(
                             children: [
                               Text('Common Required Skills',
                                   style: TextStyle(
@@ -357,7 +359,7 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         SizedBox(
@@ -369,9 +371,9 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: skills.map((skill) {
                                   return Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    padding: const EdgeInsets.symmetric(vertical: 5),
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 10),
                                       decoration: BoxDecoration(
                                         color: Colors.orange,
@@ -379,7 +381,7 @@ class _HomeState extends State<Home> {
                                       ),
                                       child: Text(
                                         skill,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -394,19 +396,19 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                     Container(
-                      margin: EdgeInsetsDirectional.only(
+                      margin: const EdgeInsetsDirectional.only(
                           start: 80, top: 25, bottom: 25, end: 40),
-                      child: VerticalDivider(
+                      child: const VerticalDivider(
                         color: Colors.black,
                         thickness: 2,
                       ),
                     ),
                     Container(
-                      margin: EdgeInsetsDirectional.only(top: 25),
+                      margin: const EdgeInsetsDirectional.only(top: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             'Top Hiring Companies',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 25),
@@ -420,17 +422,17 @@ class _HomeState extends State<Home> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: companies.map((company) {
                                     return Padding(
-                                      padding: EdgeInsets.only(top: 15),
+                                      padding: const EdgeInsets.only(top: 15),
                                       child: Row(
                                         children: [
-                                          Icon(Icons.verified,
+                                          const Icon(Icons.verified,
                                               color: Colors.orange),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 5,
                                           ),
                                           Text(
                                             company,
-                                            style: TextStyle(fontSize: 15),
+                                            style: const TextStyle(fontSize: 15),
                                           )
                                         ],
                                       ),
@@ -440,34 +442,34 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
-                          Text(
+                          const Text(
                             'Average Salary',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 25),
                           ),
                           Container(
-                            margin: EdgeInsetsDirectional.only(end: 125),
+                            margin: const EdgeInsetsDirectional.only(end: 125),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
-                                Image(
+                                const Image(
                                   image: AssetImage(
                                     'assets/salary.png',
                                   ),
                                   height: 30,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Text(
                                   salary,
-                                  style: TextStyle(fontSize: 15),
+                                  style: const TextStyle(fontSize: 15),
                                 )
                               ],
                             ),
@@ -478,28 +480,28 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text('Recommended Job',
+                        const Text('Recommended Job',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 25)),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        Image(
+                        const Image(
                           image: AssetImage('assets/recommended.png'),
                           height: 40,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 1050,
                         ),
                         PopupMenuButton<String>(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.filter_alt_sharp,
                             size: 40,
                           ),
@@ -521,8 +523,8 @@ class _HomeState extends State<Home> {
                                 child: Row(
                                   children: [
                                     if (isSelected)
-                                      Icon(Icons.check, color: Colors.black),
-                                    if (isSelected) SizedBox(width: 8),
+                                      const Icon(Icons.check, color: Colors.black),
+                                    if (isSelected) const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
                                         option,
@@ -544,21 +546,21 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
-                    Container(
+                    SizedBox(
                       height: 180,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        physics: BouncingScrollPhysics(),
+                        physics: const BouncingScrollPhysics(),
                         itemCount: recommended.length,
                         itemBuilder: (context, index) {
                           return Container(
                             width: 440,
                             height: 180,
-                            margin: EdgeInsetsDirectional.only(end: 40),
-                            padding: EdgeInsetsDirectional.only(top: 15),
+                            margin: const EdgeInsetsDirectional.only(end: 40),
+                            padding: const EdgeInsetsDirectional.only(top: 15),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20)),
@@ -566,87 +568,87 @@ class _HomeState extends State<Home> {
                               children: [
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/software.png'),
                                       height: 30,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 35,
                                     ),
                                     Text(
                                       recommended[index]['title'] ?? 'No Title',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25),
                                     )
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/salary.png'),
                                       height: 15,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
                                       recommended[index]['salary'] ??
                                           'No Salary Info',
-                                      style: TextStyle(fontSize: 15),
+                                      style: const TextStyle(fontSize: 15),
                                     )
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/skills.png'),
                                       height: 15,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
                                       recommended[index]['skills'] ??
                                           'No Skills Info',
-                                      style: TextStyle(fontSize: 15),
+                                      style: const TextStyle(fontSize: 15),
                                     )
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/match.png'),
                                       height: 15,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
                                       recommended[index]['match'] ??
                                           'No Match Info',
-                                      style: TextStyle(fontSize: 15),
+                                      style: const TextStyle(fontSize: 15),
                                     )
                                   ],
                                 )
@@ -659,28 +661,28 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text('Relevant Job',
+                        const Text('Relevant Job',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 25)),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        Image(
+                        const Image(
                           image: AssetImage('assets/relevant.png'),
                           height: 40,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 1120,
                         ),
                         PopupMenuButton<String>(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.filter_alt_sharp,
                             size: 40,
                           ),
@@ -702,8 +704,8 @@ class _HomeState extends State<Home> {
                                 child: Row(
                                   children: [
                                     if (isSelected)
-                                      Icon(Icons.check, color: Colors.black),
-                                    if (isSelected) SizedBox(width: 8),
+                                      const Icon(Icons.check, color: Colors.black),
+                                    if (isSelected) const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
                                         option,
@@ -725,7 +727,7 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     SizedBox(
@@ -737,8 +739,8 @@ class _HomeState extends State<Home> {
                           return Container(
                             width: 440,
                             height: 180,
-                            margin: EdgeInsetsDirectional.only(end: 40),
-                            padding: EdgeInsetsDirectional.only(top: 15),
+                            margin: const EdgeInsetsDirectional.only(end: 40),
+                            padding: const EdgeInsetsDirectional.only(top: 15),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20)),
@@ -746,84 +748,84 @@ class _HomeState extends State<Home> {
                               children: [
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/software.png'),
                                       height: 30,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 35,
                                     ),
                                     Text(
                                       relevant[index]['title'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25),
                                     )
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/salary.png'),
                                       height: 15,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
                                       relevant[index]['salary'],
-                                      style: TextStyle(fontSize: 15),
+                                      style: const TextStyle(fontSize: 15),
                                     )
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/skills.png'),
                                       height: 15,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
                                       relevant[index]['skills'],
-                                      style: TextStyle(fontSize: 15),
+                                      style: const TextStyle(fontSize: 15),
                                     )
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
-                                    Image(
+                                    const Image(
                                       image: AssetImage('assets/match.png'),
                                       height: 15,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
                                       relevant[index]['match'],
-                                      style: TextStyle(fontSize: 15),
+                                      style: const TextStyle(fontSize: 15),
                                     )
                                   ],
                                 )
@@ -844,5 +846,5 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(60);
+  Size get preferredSize => const Size.fromHeight(60);
 }

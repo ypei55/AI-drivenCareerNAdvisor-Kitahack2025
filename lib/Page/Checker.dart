@@ -8,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../Component/TopNavBar.dart';
 
 class Checker extends StatefulWidget {
+  const Checker({super.key});
+
   @override
   _CheckerState createState() => _CheckerState();
 }
@@ -16,7 +18,7 @@ class _CheckerState extends State<Checker> {
   String? _fileName;
   bool _isHovering = false;
   bool _isLoading = false;
-  TextEditingController _jobDescriptionController = TextEditingController();
+  final TextEditingController _jobDescriptionController = TextEditingController();
   String? _resumeText;
 
   Future<String> _pickFile() async {
@@ -47,7 +49,7 @@ class _CheckerState extends State<Checker> {
     try {
       if (_resumeText == null || _resumeText!.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please upload a resume first.")),
+          const SnackBar(content: Text("Please upload a resume first.")),
         );
         return;
       }
@@ -56,7 +58,7 @@ class _CheckerState extends State<Checker> {
 
       if (jobDescription.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please enter a job description.")),
+          const SnackBar(content: Text("Please enter a job description.")),
         );
         return;
       }
@@ -92,7 +94,7 @@ class _CheckerState extends State<Checker> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopNavBar(page: 'checker',),
-      backgroundColor: Color(0xFFFFF5EC),
+      backgroundColor: const Color(0xFFFFF5EC),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
@@ -110,7 +112,7 @@ class _CheckerState extends State<Checker> {
                       child: GestureDetector(
                         onTap: _pickFile,
                         child: AnimatedContainer(
-                          duration: Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 200),
                           width: double.infinity,
                           height: 350,
                           decoration: BoxDecoration(
@@ -132,15 +134,15 @@ class _CheckerState extends State<Checker> {
                                     ? Colors.orange
                                     : Colors.grey[400],
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               Text(
                                 _fileName ?? "Drop, Upload or Paste Resume",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 25, fontWeight: FontWeight.w600),
                                 textAlign: TextAlign.center,
                               ),
-                              SizedBox(height: 5),
-                              Text(
+                              const SizedBox(height: 5),
+                              const Text(
                                 "Supported formats: .pdf, .docx, .doc",
                                 style:
                                     TextStyle(fontSize: 14, color: Colors.grey),
@@ -150,8 +152,8 @@ class _CheckerState extends State<Checker> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
-                    Align(
+                    const SizedBox(height: 30),
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Job Description",
@@ -159,11 +161,11 @@ class _CheckerState extends State<Checker> {
                             fontSize: 28, fontWeight: FontWeight.w900),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Container(
                       width: double.infinity,
                       height: 130,
-                      padding: EdgeInsets.all(13),
+                      padding: const EdgeInsets.all(13),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.orange),
                         borderRadius: BorderRadius.circular(10),
@@ -180,7 +182,7 @@ class _CheckerState extends State<Checker> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     SizedBox(
                       width: 250,
                       height: 40,
@@ -193,7 +195,7 @@ class _CheckerState extends State<Checker> {
                           ),
                         ),
                         child: _isLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
@@ -201,7 +203,7 @@ class _CheckerState extends State<Checker> {
                                   strokeWidth: 3,
                                 ),
                               )
-                            : Text(
+                            : const Text(
                                 "Checking",
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white),

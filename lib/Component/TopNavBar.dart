@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
   String page;
-  TopNavBar({required this.page});
+  TopNavBar({super.key, required this.page});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
-                Column(
+                const Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
@@ -43,14 +43,14 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
                 Positioned(
                   bottom: 6, // Adjust this value for fine-tuning
                   child: CustomPaint(
-                    size: Size(120, 6), // Width & height of the oval
+                    size: const Size(120, 6), // Width & height of the oval
                     painter: OvalPainter(),
                   ),
                 ),
               ],
             )
           ),
-          Spacer(),
+          const Spacer(),
           // Navigation items
           _buildNavItem('Home', context, '/home', isHome),
           _buildNavItem('Checker', context, '/checker', isChecker),
@@ -63,9 +63,9 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Color(0xFFF2994A),
+                color: const Color(0xFFF2994A),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: PopupMenuButton<String>(
@@ -74,7 +74,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
                   context.go(value); // Use GoRouter navigation
                 },
                 itemBuilder: (context) => [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: "profile",
                     child: Row(
                       children: [
@@ -84,7 +84,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
                       ],
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: "wallet",
                     child: Row(
                       children: [
@@ -94,7 +94,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
                       ],
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: "language",
                     child: Row(
                       children: [
@@ -104,7 +104,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
                       ],
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: "settings",
                     child: Row(
                       children: [
@@ -114,7 +114,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
                       ],
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: "logout",
                     child: Row(
                       children: [
@@ -125,10 +125,10 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                 ],
-                offset: Offset(0, 40), // Adjust position of dropdown
+                offset: const Offset(0, 40), // Adjust position of dropdown
                 color: Colors.white, // Dropdown background color
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CircleAvatar(
@@ -175,7 +175,7 @@ class TopNavBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 // Custom Painter for the Oval Shape
@@ -183,7 +183,7 @@ class OvalPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Color(0xFFF2994A) // Oval color
+      ..color = const Color(0xFFF2994A) // Oval color
       ..style = PaintingStyle.stroke // Stroke to create a ring effect
       ..strokeWidth = 4.0; // Thickness of the oval
 

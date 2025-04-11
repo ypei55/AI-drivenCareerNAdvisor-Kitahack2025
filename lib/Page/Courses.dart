@@ -124,6 +124,8 @@ class Courses extends StatelessWidget implements PreferredSizeWidget {
     },
   ];
 
+  Courses({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

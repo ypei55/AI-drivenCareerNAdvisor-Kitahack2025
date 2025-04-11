@@ -144,7 +144,7 @@ class _InterviewResultState extends State<InterviewResult> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Completed",
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
@@ -324,7 +324,7 @@ class ScoreDetails extends StatelessWidget {
         title: 'HR interview report',
         score: '${overallhrIVScore * 10}%',
         questionAnswerScores: extractedEvaluations.map((q) {
-          final map = q as Map<String, dynamic>;
+          final map = q;
           return QuestionAnswerScore(
             question: map['question']?.toString() ?? 'N/A',
             answer: map['intervieweeResponse']?.toString() ?? 'N/A',

@@ -25,7 +25,7 @@ class _CategoryState extends State<Category> {
     return Container(
       width: 300,
       height: 325,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -55,8 +55,8 @@ class _CategoryState extends State<Category> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '${widget.category}',
-              style: TextStyle(
+              widget.category,
+              style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold
               ),
@@ -65,8 +65,8 @@ class _CategoryState extends State<Category> {
           Padding(
             padding: const EdgeInsets.only(left: 30, right: 20),
             child: Text(
-              '${widget.description}',
-              style: TextStyle(
+              widget.description,
+              style: const TextStyle(
                 color: Colors.grey
               ),
             ),

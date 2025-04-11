@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class NavBarLogIn extends StatelessWidget implements PreferredSizeWidget {
+  const NavBarLogIn({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -16,7 +18,7 @@ class NavBarLogIn extends StatelessWidget implements PreferredSizeWidget {
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
                 children: [
-                  Column(
+                  const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
@@ -33,21 +35,21 @@ class NavBarLogIn extends StatelessWidget implements PreferredSizeWidget {
                   Positioned(
                     bottom: 6, // Adjust this value for fine-tuning
                     child: CustomPaint(
-                      size: Size(120, 6), // Width & height of the oval
+                      size: const Size(120, 6), // Width & height of the oval
                       painter: OvalPainter(),
                     ),
                   ),
                 ],
               )
           ),
-          Spacer(),
+          const Spacer(),
           // Navigation items
           GestureDetector(
             onTap: (){
               context.go('/signup');
             },
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
+            child: const Padding(
+              padding: EdgeInsets.all(4.0),
               child: Text(
                 'Sign up',
                 style: TextStyle(
@@ -57,17 +59,17 @@ class NavBarLogIn extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Color(0xFFF2994A),
+                color: const Color(0xFFF2994A),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
                 child: Text(
                     'Log in',
                   style: TextStyle(
@@ -86,7 +88,7 @@ class NavBarLogIn extends StatelessWidget implements PreferredSizeWidget {
 
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 // Custom Painter for the Oval Shape
@@ -94,7 +96,7 @@ class OvalPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Color(0xFFF2994A) // Oval color
+      ..color = const Color(0xFFF2994A) // Oval color
       ..style = PaintingStyle.stroke // Stroke to create a ring effect
       ..strokeWidth = 4.0; // Thickness of the oval
 
